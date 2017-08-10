@@ -1,0 +1,20 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://wiki.org/EnigmaProperty#hasPI>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/Enigma#SZPOSITIVESYMPTOMS>
+        a       <https://wiki.org/Enigma#PROJECT(L)_CLASS> ;
+        <https://wiki.org/EnigmaProperty#hasCohort>
+                "ASRB" , "AMC" ;
+        <https://wiki.org/EnigmaProperty#hasPI>
+                "Varun" , "Daniel" , "Tirth" .
+
+<https://wiki.org/EnigmaProperty#hasCohort>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/Enigma#PROJECT(L)_CLASS>
+        a       owl:Class .
