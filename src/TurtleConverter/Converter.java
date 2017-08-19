@@ -1,6 +1,7 @@
 package TurtleConverter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.OutputStream;
 import java.net.URI;
 import java.security.MessageDigest;
@@ -47,22 +48,25 @@ public static String HAS_PROPERTY="https://wiki.org/EnigmaProperty#";
     
 public static void main(String[] args) throws Exception {
 	
-	ConvertFunction();
-	
-	
-	
+	ConvertFunction(args[0],args[1]);
 	
 }
 
-public static void ConvertFunction() throws Exception
+
+public static void ConvertFunction(String loc,String output) throws Exception
 {
+	StringBuilder sbans=new StringBuilder();
+	String sub=loc.substring(loc.lastIndexOf("/")+1,loc.length());
+	String firstpart=loc.substring(0,loc.lastIndexOf("/"))+"/";
+	if(sub.contains("project")||sub.contains("workinggroup"))
+	{
 	if(wiki!=null)
 	{
 		wiki.removeAll();
 	}
 	wiki=ModelFactory.createOntologyModel();
 	
-	Scanner sc=new Scanner(new File("/Users/Tirthmehta/Documents/workspace/WIKI/src/TurtleConverter/wiki.csv"));
+	Scanner sc=new Scanner(new File(loc));
 	Category c=new Category();
 	int count=0;
 	HashMap<String,ArrayList<String>> hmap=new HashMap<>();
@@ -70,7 +74,6 @@ public static void ConvertFunction() throws Exception
 	
 	while(sc.hasNextLine())
 	{
-	
 		String current=sc.nextLine();
 		String currentarr[]=current.split(",");
 		if(count==0)
@@ -81,7 +84,9 @@ public static void ConvertFunction() throws Exception
 		else if(count==1)
 		{
 			//setting the Type of the Category Instance
+			
 			c.setType(currentarr[1]);
+			sbans.append(c.getName() +" "+c.getType()+" Does not Exist"+"\n\n");
 		}
 		else if(count>=4)
 		{
@@ -103,33 +108,25 @@ public static void ConvertFunction() throws Exception
 				else
 				{
 					ArrayList<String> currentAl=new ArrayList<>();
-					currentAl.add(currentarr[1]);
-					hmap.put(prop, currentAl);
+					if(currentarr.length>1){
+						sbans.append("Property "+prop+" has been added with values: \n");
+						currentAl.add(currentarr[1]);
+						
+						for(String h:currentAl)
+							sbans.append(h+"\n\n");
+						
+						hmap.put(prop, currentAl);
+					}
 				}
 			}
 		}
 		
 		count++;
 	}
-	//setting the hashMap of the Category Instance
-	c.setHmap(hmap);
 
-	System.out.println(c.getName());
-	System.out.println(c.getType());
-	for(String x:hmap.keySet())
-	{
-		System.out.print("prop "+x+" val ");
-		ArrayList<String> check=hmap.get(x);
-		for(String y:check)
-			System.out.print(y+" ");
-		System.out.println();	
-	}
-	
-	
 	//export begins from here:
 	classIsaClass(c.getType().toUpperCase()+"_CLASS",c.getName().toUpperCase());
 
-	
 	//export for properties
 	for(String x:hmap.keySet())
 	{
@@ -138,9 +135,134 @@ public static void ConvertFunction() throws Exception
 			DataProps(HAS_PROPERTY+x,c.getName(),y,XSDDatatype.XSDstring);
 		}	
 	}
+//	File f=new File(output+"contentinfo.txt");
+//	FileWriter fw=new FileWriter(f);
+//	fw.write(sbans.toString());
+//	fw.close();
+	
 	
 	//exporting now
-	exportRDFFile("/Users/Tirthmehta/Documents/workspace/WIKI/src/TurtleConverter/Output.ttl", wiki);
+	exportRDFFile(output+c.getName()+".ttl", wiki);
+	}
+	
+	
+	else if(sub.contains("person")||sub.contains("institute")||sub.contains("cohort"))
+	{
+		
+		if(wiki!=null)
+		{
+			wiki.removeAll();
+		}
+		wiki=ModelFactory.createOntologyModel();
+		
+		Scanner sc=new Scanner(new File(loc));
+		Category c=new Category();
+		int count=0;
+		ArrayList<String> allProps=new ArrayList<>();
+		
+		while(sc.hasNextLine())
+		{
+			String current=sc.nextLine();			
+			if(count==0)
+			{
+				String currentarr[]=current.split(",");
+				c.setType(currentarr[0]);
+				for(int i=1;i<currentarr.length;i++)
+					allProps.add(currentarr[i]);
+			}
+			else if(count>0)
+			{
+				
+			if(current.contains("\""))
+			{
+				String tempcurr="";
+				String doublequote="";
+				for(int i=0;i<current.length();i++)
+				{
+					if(current.charAt(i)!='\"')
+					{
+						tempcurr+=current.charAt(i);
+						
+					}
+					else if(current.charAt(i)=='\"')
+					{
+						int j=i+1;
+					
+						while(j<current.length() && current.charAt(j)!='\"')
+						{
+							doublequote+=current.charAt(j);
+							j++;
+						}
+						doublequote=doublequote.replace(',', '$');
+
+						tempcurr+=doublequote;
+						doublequote="";
+						i=j;
+					}
+				}
+				current=tempcurr;
+			}
+
+			
+				if(wiki!=null)
+				{
+					wiki.removeAll();
+				}
+				String currentarr[]=current.split(",");
+				wiki=ModelFactory.createOntologyModel();
+				
+				HashMap<String,List<String>> hmap=new HashMap<>();
+				c.setName(currentarr[0]);
+				sbans.append(c.getName() +" "+c.getType()+ " Does not Exist"+"\n\n");
+				for(int i=1;i<currentarr.length;i++)
+				{
+					if(currentarr.length>=i)
+					{
+						String arr[]=currentarr[i].split("; ");
+						List<String> ar=Arrays.asList(arr);
+						sbans.append("Property "+allProps.get(i-1)+" has been added with values: \n");
+						for(int k=0;k<ar.size();k++)
+							ar.set(k, ar.get(k).replace('$', ','));
+						for(String h:ar)
+							sbans.append(h+"\n\n");
+						hmap.put(allProps.get(i-1),ar);
+					}
+				}
+				
+				//export begins from here:
+				classIsaClass(c.getType()+"_CLASS",c.getName().toUpperCase());
+
+				//export for properties
+				for(String x:hmap.keySet())
+				{
+					for(String y:hmap.get(x))
+					{
+						DataProps(HAS_PROPERTY+x,c.getName(),y,XSDDatatype.XSDstring);
+					}	
+				}
+				sbans.append("------------------------------------------\n\n");
+				
+				//exporting now
+				exportRDFFile(output+c.getName()+".ttl", wiki);
+				
+				
+			}
+			
+			
+			count++;
+		}
+//		File f=new File(output+"contentinfo.txt");
+//		FileWriter fw=new FileWriter(f);
+//		fw.write(sbans.toString());
+//		fw.close();
+		
+
+
+
+		
+	}
+	
+
 	
 	
 }
@@ -208,14 +330,27 @@ public static String MD5(String text) throws NoSuchAlgorithmException
 	}
 private static void classIsaClass(String classpart,String indvpart)
 {
-	 OntClass c21 = wiki.createClass(WIKI+classpart);
-     c21.createIndividual(WIKI+indvpart);
+	String x="",y="";
+	for(int i=0;i<classpart.length();i++)
+		if(classpart.charAt(i)!=' ')
+			x+=classpart.charAt(i);
+	for(int i=0;i<indvpart.length();i++)
+		if(indvpart.charAt(i)!=' ')
+			y+=indvpart.charAt(i);
+	
+	 OntClass c21 = wiki.createClass(WIKI+x);
+     c21.createIndividual(WIKI+y);
 }
 private static void DataProps(String dataprop,String resourcepart,String propextracted,XSDDatatype x)
 {
+	String xyx="";
+	for(int i=0;i<resourcepart.length();i++)
+		if(resourcepart.charAt(i)!=' ')
+			xyx+=resourcepart.charAt(i);
+	
 	OntProperty propSelec22;
     propSelec22 = wiki.createDatatypeProperty(dataprop);
-    Resource orig22 = wiki.getResource(WIKI+encode(resourcepart));
+    Resource orig22 = wiki.getResource(WIKI+encode(xyx));
     wiki.add(orig22, propSelec22,propextracted,x);
 }
 }
