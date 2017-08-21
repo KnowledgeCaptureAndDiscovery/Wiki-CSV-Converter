@@ -1,0 +1,136 @@
+Esther Walton Person (L) Does not Exist
+
+Property HasDegree (L) has been added with values: 
+Major1 University2 PhD 2005
+
+Property IsAffiliatedWith (L) has been added with values: 
+Department1, Institute1, City1, Country1
+
+XYZ University
+
+Property IsLocated (L) has been added with values: 
+City1 Country1
+
+Property HasEmail (L) has been added with values: 
+email@email.edu
+
+Property HasPublication (L) has been added with values: 
+Publication1
+
+Property HasTitle (L) has been added with values: 
+Professor
+
+Property HasWebsite (L) has been added with values: 
+random.com
+
+Property JoinedEnigmaInYear (L) has been added with values: 
+2012
+
+Property HasResearchInterests (L) has been added with values: 
+Interest1
+
+Property IsPIOf (L) has been added with values: 
+Cohort1
+
+Property IsEnigmaContactOf (L) has been added with values: 
+Cohort1
+
+Property IsInvestigatorOf (L) has been added with values: 
+Cohort3
+
+Property ContributesTo (L) has been added with values: 
+SZPositiveSymptoms
+
+Property IsJuniorLeadOfP (L) has been added with values: 
+Project1
+
+Property IsWGChair (L) has been added with values: 
+WorkingGroup1
+
+Property IsSeniorLeadOfP (L) has been added with values: 
+Project1
+
+Property IsSpecialContributorOfP (L) has been added with values: 
+Project1
+
+Property IsSpecialContributorOfWG (L) has been added with values: 
+Working Group 1
+
+Property IsMemberOfWorkingGroup (L) has been added with values: 
+Working Group 1
+
+Property IsNoLongerActive (L) has been added with values: 
+FALSE
+
+Property LeftOnDate (L) has been added with values: 
+Text
+
+Property HasFuturePublicationInstructions (L) has been added with values: 
+Text
+
+------------------------------------------
+
+Stephan Erlich Person (L) Does not Exist
+
+Property HasDegree (L) has been added with values: 
+Major2 University1 PhD 1999
+
+Property IsAffiliatedWith (L) has been added with values: 
+Department1 Institute1 City1 Country1
+
+Property IsLocated (L) has been added with values: 
+City1 Country1
+
+Property HasEmail (L) has been added with values: 
+email2@email.edu
+
+Property HasPublication (L) has been added with values: 
+Publication3
+
+Property HasTitle (L) has been added with values: 
+Professor
+
+Property HasWebsite (L) has been added with values: 
+other.com
+
+Property JoinedEnigmaInYear (L) has been added with values: 
+2011
+
+Property HasResearchInterests (L) has been added with values: 
+Interest2
+
+Property IsPIOf (L) has been added with values: 
+Cohort2
+
+Property IsEnigmaContactOf (L) has been added with values: 
+Cohort2
+
+Property IsInvestigatorOf (L) has been added with values: 
+Cohort3
+
+Property ContributesTo (L) has been added with values: 
+SZPositiveSymptoms
+
+Property IsJuniorLeadOfP (L) has been added with values: 
+Project2
+
+Property IsWGChair (L) has been added with values: 
+WorkingGroup2
+
+Property IsSeniorLeadOfP (L) has been added with values: 
+Project1
+
+Property IsSpecialContributorOfP (L) has been added with values: 
+Project3
+
+Property IsSpecialContributorOfWG (L) has been added with values: 
+Working Group 1
+
+Property IsMemberOfWorkingGroup (L) has been added with values: 
+Working Group 1
+
+Property IsNoLongerActive (L) has been added with values: 
+FALSE
+
+------------------------------------------
+

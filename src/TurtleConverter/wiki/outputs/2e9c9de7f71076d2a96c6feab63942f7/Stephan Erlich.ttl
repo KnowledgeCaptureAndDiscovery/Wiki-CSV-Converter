@@ -1,0 +1,110 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://wiki.org/EnigmaProperty#HasDegree (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#IsSpecialContributorOfP (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasEmail (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#IsLocated (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasPublication (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasWebsite (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#IsPIOf (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#IsSpecialContributorOfWG (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#IsAffiliatedWith (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#IsJuniorLeadOfP (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#IsWGChair (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#IsEnigmaContactOf (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#IsInvestigatorOf (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#IsMemberOfWorkingGroup (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasResearchInterests (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/Enigma#STEPHANERLICH>
+        a       <https://wiki.org/Enigma#PERSON(L)_CLASS> ;
+        <https://wiki.org/EnigmaProperty#ContributesTo (L)>
+                "SZPositiveSymptoms" ;
+        <https://wiki.org/EnigmaProperty#HasDegree (L)>
+                "Major2 University1 PhD 1999" ;
+        <https://wiki.org/EnigmaProperty#HasEmail (L)>
+                "email2@email.edu" ;
+        <https://wiki.org/EnigmaProperty#HasPublication (L)>
+                "Publication3" ;
+        <https://wiki.org/EnigmaProperty#HasResearchInterests (L)>
+                "Interest2" ;
+        <https://wiki.org/EnigmaProperty#HasTitle (L)>
+                "Professor" ;
+        <https://wiki.org/EnigmaProperty#HasWebsite (L)>
+                "other.com" ;
+        <https://wiki.org/EnigmaProperty#IsAffiliatedWith (L)>
+                "Department1 Institute1 City1 Country1" ;
+        <https://wiki.org/EnigmaProperty#IsEnigmaContactOf (L)>
+                "Cohort2" ;
+        <https://wiki.org/EnigmaProperty#IsInvestigatorOf (L)>
+                "Cohort3" ;
+        <https://wiki.org/EnigmaProperty#IsJuniorLeadOfP (L)>
+                "Project2" ;
+        <https://wiki.org/EnigmaProperty#IsLocated (L)>
+                "City1 Country1" ;
+        <https://wiki.org/EnigmaProperty#IsMemberOfWorkingGroup (L)>
+                "Working Group 1" ;
+        <https://wiki.org/EnigmaProperty#IsNoLongerActive (L)>
+                "FALSE" ;
+        <https://wiki.org/EnigmaProperty#IsPIOf (L)>
+                "Cohort2" ;
+        <https://wiki.org/EnigmaProperty#IsSeniorLeadOfP (L)>
+                "Project1" ;
+        <https://wiki.org/EnigmaProperty#IsSpecialContributorOfP (L)>
+                "Project3" ;
+        <https://wiki.org/EnigmaProperty#IsSpecialContributorOfWG (L)>
+                "Working Group 1" ;
+        <https://wiki.org/EnigmaProperty#IsWGChair (L)>
+                "WorkingGroup2" ;
+        <https://wiki.org/EnigmaProperty#JoinedEnigmaInYear (L)>
+                "2011" .
+
+<https://wiki.org/EnigmaProperty#IsNoLongerActive (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/Enigma#PERSON(L)_CLASS>
+        a       owl:Class .
+
+<https://wiki.org/EnigmaProperty#ContributesTo (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasTitle (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#IsSeniorLeadOfP (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#JoinedEnigmaInYear (L)>
+        a       owl:DatatypeProperty .

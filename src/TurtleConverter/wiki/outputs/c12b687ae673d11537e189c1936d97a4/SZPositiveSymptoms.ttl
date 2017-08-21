@@ -1,0 +1,70 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://wiki.org/EnigmaProperty#HasPSeniorLead (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#IsProjectOf (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasContactPerson (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/Enigma#PROJECT(L)_CLASS>
+        a       owl:Class .
+
+<https://wiki.org/EnigmaProperty#HasEndDate (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasStartDate (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasCohort (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasTargetDate (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/Enigma#SZPOSITIVESYMPTOMS>
+        a       <https://wiki.org/Enigma#PROJECT(L)_CLASS> ;
+        <https://wiki.org/EnigmaProperty#HasApprovedProposalForm (L)>
+                "https://drive.google.com/drive/folders/0B4KZibhSmB6Jalh6WVNZanlnZE0" ;
+        <https://wiki.org/EnigmaProperty#HasCohort (L)>
+                "UPENN^Cohort" , "PaFIP3T" , "Frankfurt^Cohort" ;
+        <https://wiki.org/EnigmaProperty#HasContactPerson (L)>
+                "Stephan Erlich" , "Esther Walton" ;
+        <https://wiki.org/EnigmaProperty#HasEndDate (L)>
+                "12/22/05" ;
+        <https://wiki.org/EnigmaProperty#HasPBriefDescription (L)>
+                "examines relationship between superior temporal gyrus thickness and positive symptoms" ;
+        <https://wiki.org/EnigmaProperty#HasPJuniorLead (L)>
+                "Esther Walton" ;
+        <https://wiki.org/EnigmaProperty#HasPSeniorLead (L)>
+                "Stephan Erlich" ;
+        <https://wiki.org/EnigmaProperty#HasPSpecialContributor (L)>
+                "Jessica Turner" , "T. Nickson" ;
+        <https://wiki.org/EnigmaProperty#HasStartDate (L)>
+                "6/22/01" ;
+        <https://wiki.org/EnigmaProperty#HasStatus (L)>
+                "Published" ;
+        <https://wiki.org/EnigmaProperty#HasTargetDate (L)>
+                "1/2/03" ;
+        <https://wiki.org/EnigmaProperty#IsProjectOf (L)>
+                "SZWorkingGroup" .
+
+<https://wiki.org/EnigmaProperty#HasPBriefDescription (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasApprovedProposalForm (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasPJuniorLead (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasStatus (L)>
+        a       owl:DatatypeProperty .
+
+<https://wiki.org/EnigmaProperty#HasPSpecialContributor (L)>
+        a       owl:DatatypeProperty .
