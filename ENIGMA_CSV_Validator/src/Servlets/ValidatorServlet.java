@@ -55,10 +55,16 @@ public class ValidatorServlet extends HttpServlet {
         try {
         	Validator validator = new Validator();
 			
-			HttpSession session = request.getSession(); //get current session
-		    session.setAttribute("report", validator.getValidationReport(filePath, getServletContext().getRealPath("/"))); 
+			HttpSession session = request.getSession(); // get current session
+			
+			// saves validation report locally
+		    session.setAttribute("report", validator.getValidationReport2(
+		    		filePath, 
+		    		getServletContext().getRealPath("/")
+		    	)
+		    ); 
 		    
-		    response.sendRedirect("LandingPage.jsp"); //redirect to login menu
+		    response.sendRedirect("jsp/LandingPage.jsp"); //redirect to login menu
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
