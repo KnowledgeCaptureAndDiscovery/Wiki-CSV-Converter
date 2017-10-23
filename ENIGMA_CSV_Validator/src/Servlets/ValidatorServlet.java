@@ -58,7 +58,7 @@ public class ValidatorServlet extends HttpServlet {
 			HttpSession session = request.getSession(); // get current session
 			
 			// saves validation report locally
-		    session.setAttribute("report", validator.getValidationReport2(
+		    session.setAttribute("report", validator.getValidationReport(
 		    		filePath, 
 		    		getServletContext().getRealPath("/")
 		    	)
