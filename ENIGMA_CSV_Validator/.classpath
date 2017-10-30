@@ -42,5 +42,6 @@
 	<classpathentry kind="lib" path="/Users/ryanespiritu/Downloads/apache-jena-3.4.0/lib/slf4j-api-1.7.25.jar"/>
 	<classpathentry kind="lib" path="/Users/ryanespiritu/Downloads/apache-jena-3.4.0/lib/slf4j-log4j12-1.7.25.jar"/>
 	<classpathentry kind="lib" path="/usr/local/apache-tomcat-9.0.0.M15/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/Users/ryanespiritu/Downloads/json-simple-1.1.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -28,4 +28,11 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>WebContent/WEB-INF/lib/json-simple-1.1.1.jar</name>
+			<type>1</type>
+			<location>/Users/ryanespiritu/Downloads/json-simple-1.1.1.jar</location>
+		</link>
+	</linkedResources>
 </projectDescription>

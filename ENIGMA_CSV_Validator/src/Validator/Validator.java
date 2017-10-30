@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.*;
 
+import APIquery.*;
+
 class Category {
 	
 	String Name;
@@ -36,9 +38,6 @@ class Category {
 }
 
 public class Validator {
-	
-	public static String WIKI="https://wiki.org/Enigma#";
-	public static String HAS_PROPERTY="https://wiki.org/EnigmaProperty#";
 	
 	// Set of int properties
 	public final static Set<String> INT_PROPERTIES = Collections.unmodifiableSet(
@@ -91,7 +90,18 @@ public class Validator {
 				else if(count==1) {
 					//setting the Type of the Category Instance
 					c.setType(currentarr[1]);
-					sbans.append("<strong>" + c.getName() +" "+c.getType()+" Does not Exist </strong><br /><br />");
+					
+					// Create API query object
+					APIQuery api_query = new APIQuery(); 
+					String entity = c.getName();
+					entity = entity.replaceAll(" ", "+");
+					
+					if(api_query.doesExist(entity)) {
+						sbans.append("<strong>" + c.getName() +" "+c.getType()+" already exists. Your csv data will overwrite any existing values with the wiki. </strong><br /><br />");
+					}
+					else {
+						sbans.append("<strong>" + c.getName() +" "+c.getType()+" does not exist. A new wiki page will be created. </strong><br /><br />");
+					}
 				}
 				else if(count>=4) {
 					// if blank line continue and set property to null
@@ -151,7 +161,7 @@ public class Validator {
 							ArrayList<String> currentAl=new ArrayList<>();
 							
 							if(currentarr.length > 1) {
-								sbans.append("- Property " + prop + " has been added with values: <br />");
+								sbans.append("- Property " + prop + " will be added with values: <br />");
 								currentAl.add(currentarr[1]);
 								
 								for(String value : currentAl) {
@@ -277,9 +287,19 @@ public class Validator {
 					
 					c.setName(currentarr[0]);
 					
-					// prints individual name and individual type
-					sbans.append("<strong>" + c.getName() + " " + c.getType() + " Does not Exist </strong><br /><br />");
+					// Create API query object
+					APIQuery api_query = new APIQuery(); 
+					String entity = c.getName();
+					entity = entity.replaceAll(" ", "+");
 					
+					// Create API query object 
+					if(api_query.doesExist(entity)) {
+						sbans.append("<strong>" + c.getName() +" "+c.getType()+" already exists. Your csv data will overwrite any existing values with the wiki. </strong><br /><br />");
+					}
+					else {
+						sbans.append("<strong>" + c.getName() +" "+c.getType()+" does not exist. A new wiki page will be created. </strong><br /><br />");
+					}
+										
 					for(int i=1; i<currentarr.length; i++) {
 						if(currentarr.length >= i) {
 							String arr[]=currentarr[i].split("; ");
@@ -288,7 +308,7 @@ public class Validator {
 							
 							// add property values to report if they are not empty
 							if(!values.contains("") || values.size() > 1) {
-								sbans.append("- Property " + allProps.get(i-1) + " has been added with values: <br />");
+								sbans.append("- Property " + allProps.get(i-1) + " will be added with values: <br />");
 	
 								for(int k=0; k<values.size(); k++) {
 									values.set(k, values.get(k).replace('$', ','));
