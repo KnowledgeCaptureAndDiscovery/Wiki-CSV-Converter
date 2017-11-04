@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.util.*;
 
 import APIquery.*;
+import Ontology.*;
+import Utilities.*;
 
 class Category {
 	
@@ -69,7 +71,11 @@ public class Validator {
 		StringBuilder sbans = new StringBuilder();
 		String sub = loc.substring(loc.lastIndexOf("/") + 1, loc.length());
 		
-		if(sub.contains("project") || sub.contains("workinggroup") || sub.contains("wiki")) {			
+		// Create API query object
+		APIQuery api_query = new APIQuery(); 
+		api_query.login();
+		
+		if(sub.contains("project") || sub.contains("workinggroup")) {			
 			Scanner sc = new Scanner(new File(loc));
 			Category c = new Category();
 			
@@ -78,7 +84,8 @@ public class Validator {
 			HashMap<String,ArrayList<String>> hmap = new HashMap<>();
 			String prop = null; // property
 			ArrayList<String> warnings = new ArrayList<String>(); // list of warnings
-			
+			ArrayList<String> generalWarnings = new ArrayList<String>(); // list of warnings
+
 			while(sc.hasNextLine()) {
 				String current = sc.nextLine();
 				String currentarr[] = current.split(",");
@@ -91,8 +98,6 @@ public class Validator {
 					//setting the Type of the Category Instance
 					c.setType(currentarr[1]);
 					
-					// Create API query object
-					APIQuery api_query = new APIQuery(); 
 					String entity = c.getName();
 					entity = entity.replaceAll(" ", "+");
 					
@@ -113,6 +118,26 @@ public class Validator {
 					else {
 						if(prop==null) {
 							prop=currentarr[0];
+							
+							/*** CHECKING FOR PROPERTY NAMING WARNINGS ***/
+							// Initialize ontology object with corresponding owl file
+							Ontology ontology = null;
+							if(c.getType().contains("Project")) {
+								ontology = new Ontology(Constants.PROJECT_ONTOLOGY);
+							}
+							else if(c.getType().contains("WorkingGroup")) {
+								ontology = new Ontology(Constants.WORKING_GROUP_ONTOLOGY);
+							}
+							
+							// Format property for ontology query
+							String property = prop;
+							property = property.split(" ")[0];
+							property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
+							
+							// If property doesn't exist in the ontology
+							if(!ontology.propertyExists(property)) {
+								generalWarnings.add("- WARNING: Property " + prop + " does not exist within the wiki, was this addition intended? <br />");
+							}
 						}
 
 						if(hmap.containsKey(prop)) {
@@ -162,6 +187,7 @@ public class Validator {
 							
 							if(currentarr.length > 1) {
 								sbans.append("- Property " + prop + " will be added with values: <br />");
+								
 								currentAl.add(currentarr[1]);
 								
 								for(String value : currentAl) {
@@ -215,8 +241,9 @@ public class Validator {
 			}
 			
 			/*** ADDING WARNINGS TO REPORT ***/
+			warnings.addAll(generalWarnings);
 			if(!warnings.isEmpty()) {
-				sbans.append("******************************************************************* <br />");
+				sbans.append("<font color=red> ******************************************************************* <br />");
 				
 				sbans.append("<strong> ALERT: " + warnings.size() + " warning(s) found </strong><br />");
 				
@@ -224,7 +251,7 @@ public class Validator {
 					sbans.append(warning + "<br />");
 				}
 				
-				sbans.append("******************************************************************* <br /><br />");
+				sbans.append("******************************************************************* </font><br /><br />");
 			}
 			
 			sc.close();
@@ -232,14 +259,15 @@ public class Validator {
 			return sbans.toString();
 			
 		}	
-		else if(sub.contains("person") || sub.contains("institute") || sub.contains("cohort")) {			
+		else if(sub.contains("person") || sub.contains("organization") || sub.contains("cohort")) {			
 			Scanner sc = new Scanner(new File(loc));
 			
 			Category c=new Category();
 			
 			int count=0;
 			
-			ArrayList<String> allProps=new ArrayList<>();
+			ArrayList<String> allProps = new ArrayList<String>();
+			ArrayList<String> generalWarnings = new ArrayList<String>(); // General warnings not specific to a given csv entry
 			
 			while(sc.hasNextLine()) {
 				String current = sc.nextLine();	
@@ -248,8 +276,30 @@ public class Validator {
 					String currentarr[]=current.split(",");
 					c.setType(currentarr[0]);
 					
+					// Initialize ontology object with corresponding owl file
+					Ontology ontology = null;
+					if(c.getType().contains("Person")) {
+						ontology = new Ontology(Constants.PERSON_ONTOLOGY);
+					}
+					else if(c.getType().contains("Organization")) {
+						ontology = new Ontology(Constants.ORGANIZATION_ONTOLOGY);
+					}
+					else if(c.getType().contains("Cohort")) {
+						ontology = new Ontology(Constants.COHORT_ONTOLOGY);
+					}
+					
 					for(int i=1; i<currentarr.length; i++) {
 						allProps.add(currentarr[i]);
+						
+						// Format property for ontology query
+						String property = currentarr[i];
+						property = property.split(" ")[0];
+						property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
+						
+						// If property doesn't exist in the ontology
+						if(!ontology.propertyExists(property)) {
+							generalWarnings.add("- WARNING: Property " + currentarr[i] + " does not exist within the wiki, was this addition intended? <br />");
+						}
 					}
 				}
 				else if(count > 0) {
@@ -287,8 +337,6 @@ public class Validator {
 					
 					c.setName(currentarr[0]);
 					
-					// Create API query object
-					APIQuery api_query = new APIQuery(); 
 					String entity = c.getName();
 					entity = entity.replaceAll(" ", "+");
 					
@@ -384,8 +432,9 @@ public class Validator {
 					}
 					
 					/*** ADDING WARNINGS TO REPORT ***/
+					warnings.addAll(generalWarnings);
 					if(!warnings.isEmpty()) {
-						sbans.append("******************************************************************* <br />");
+						sbans.append("<font color=red> ******************************************************************* <br />");
 						
 						sbans.append("<strong> ALERT: " + warnings.size() + " warning(s) found </strong><br />");
 						
@@ -393,7 +442,7 @@ public class Validator {
 							sbans.append(warning + "<br />");
 						}
 						
-						sbans.append("******************************************************************* <br /><br />");
+						sbans.append("******************************************************************* </font><br /><br />");
 					}
 					
 					sbans.append("------------------------------------------------------------------------------------------------<br /><br /><br /><br />");

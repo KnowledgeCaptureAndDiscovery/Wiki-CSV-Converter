@@ -14,17 +14,18 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import Utilities.Constants;
+
 // Class to query the API 
 
 public class APIQuery {
 	
-	public static String WIKI="http://organicdatacuration.org/enigma_sandbox";
 	private String cookieprefix;
 	private String token;
 	private String sessionid;
 	
 	public static void main(String[] args) {
-		CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+		//CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
 		APIQuery api_query = new APIQuery();
 		api_query.login();
 	}
@@ -33,13 +34,14 @@ public class APIQuery {
 		CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
 	}
 	
+	// Logs in to wiki using token 
 	public void login() {
 		try {
 			getLoginParams();
             
-            String link = WIKI + "/api.php?action=login&lgname=ryanespiritu&lgpassword=bluebaby1&lgtoken="+token+"&format=json";
-			System.out.println(link);
+            String link = Constants.WIKI + "/api.php?action=login&lgname=ryanespiritu&lgpassword=bluebaby1&lgtoken="+token+"&format=json";
 			URL url = new URL(link);
+			
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.addRequestProperty(cookieprefix, sessionid);
 			con.setRequestMethod("POST");
@@ -54,11 +56,7 @@ public class APIQuery {
 			
 	        JSONParser parser = new JSONParser();
 	        Object obj = parser.parse(response.toString());
-	        JSONObject jsonObject = (JSONObject) obj;
-            System.out.println(jsonObject);
-            
-            System.out.println(doesExist("AMC"));
-
+	        JSONObject jsonObject = (JSONObject) obj;            
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -70,11 +68,10 @@ public class APIQuery {
 	// Gets login token and sessionID and stores them locally
 	public void getLoginParams() {
 		try {
-			String link = WIKI + "/api.php?action=login&lgname=ryanespiritu&lgpassword=bluebaby1&format=json";
-			System.out.println(link);
+			String link = Constants.WIKI + "/api.php?action=login&lgname=ryanespiritu&lgpassword=bluebaby1&format=json";
 			URL url = new URL(link);
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();		
 			con.setRequestMethod("POST");
 			
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -88,7 +85,6 @@ public class APIQuery {
 	        JSONParser parser = new JSONParser();
 	        Object obj = parser.parse(response.toString());
 	        JSONObject jsonObject = (JSONObject) obj;
-            System.out.println(jsonObject);
 
 	        JSONObject login = (JSONObject) jsonObject.get("login");
 	        sessionid = (String) login.get("sessionid");
@@ -102,11 +98,10 @@ public class APIQuery {
 		}
 	}
 	
-	// Checks if an entity exists in the wiki
+	// Checks if parameter exists in the wiki
 	public boolean doesExist(String entity) {
 		try {
-			String link = WIKI + "/api.php?&format=json&action=query&list=search&srwhat=title&srsearch="+entity;
-			System.out.println(link);
+			String link = Constants.WIKI + "/api.php?&format=json&action=query&list=search&srwhat=title&srsearch="+entity;
 			URL url = new URL(link);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
@@ -122,14 +117,16 @@ public class APIQuery {
 	        JSONParser parser = new JSONParser();
 	        Object obj = parser.parse(response.toString());
 	        JSONObject jsonObject = (JSONObject) obj;
-            System.out.println(jsonObject);
-            
+	        
             JSONObject query = (JSONObject) jsonObject.get("query");
             JSONArray search = (JSONArray) query.get("search");
             
             for(int i = 0; i < search.size(); i++) {
             	JSONObject result = (JSONObject) search.get(i);
             	String title = (String) result.get("title");
+            	
+            	entity = entity.replaceAll("\\+", " ");
+
             	if(title.equals(entity)) {
         			in.close();
             		return true;
@@ -146,6 +143,6 @@ public class APIQuery {
 			e.printStackTrace();
 			return false;
 		}
-	}
+	}	
 	
 }
