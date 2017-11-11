@@ -266,6 +266,8 @@ public class Validator {
 			
 			int count=0;
 			
+			Ontology ontology = null;
+			
 			ArrayList<String> allProps = new ArrayList<String>();
 			ArrayList<String> generalWarnings = new ArrayList<String>(); // General warnings not specific to a given csv entry
 			
@@ -274,10 +276,10 @@ public class Validator {
 
 				if(count == 0) {
 					String currentarr[]=current.split(",");
-					c.setType(currentarr[0]);
+					
+					c.setType(currentarr[0]);	
 					
 					// Initialize ontology object with corresponding owl file
-					Ontology ontology = null;
 					if(c.getType().contains("Person")) {
 						ontology = new Ontology(Constants.PERSON_ONTOLOGY);
 					}
@@ -363,51 +365,18 @@ public class Validator {
 								}
 															
 								for(String value : values) {
-									// Check if property is of type int
-									if(INT_PROPERTIES.contains(allProps.get(i-1))) {
-										// If value is not an int add a warning
-										if(!isInteger(value)) {
-											warnings.add("- WARNING: Property " + allProps.get(i-1) + " received value '" + value + "'  but expects a value of type 'int' <br />");
-											sbans.append("<br />");
-										}
-										else {
-											sbans.append("&emsp; - " + value + "<br /><br />");
-							
-											/*** CHECKING FOR WARNINGS ***/
-											// check for shortened value error
-											if(value.length() == 1) {
-												warnings.add("- WARNING: Property " + allProps.get(i-1) + " has value of '" + value + "', was this intended? <br />");
-											}
-											// check for abbreviations error
-											else if(value.length() == 2 && value.contains(".")) {
-												warnings.add("- WARNING: Property " + allProps.get(i-1) + " has value of '" + value + "', please avoid abbreviations <br />");
-											}
-										}
-									}
-									// Check if property is of type boolean
-									else if(BOOLEAN_PROPERTIES.contains(allProps.get(i-1))) {
-										// If value is not a boolean add a warning
-										if(!isBoolean(value)) {
-											warnings.add("- WARNING: Property " + allProps.get(i-1) + " received value '" + value + "'  but expects a value of type 'boolean' <br />");
-											sbans.append("<br />");
-										}
-										else {
-											sbans.append("&emsp; - " + value + "<br /><br />");
-							
-											/*** CHECKING FOR WARNINGS ***/
-											// check for shortened value error
-											if(value.length() == 1) {
-												warnings.add("- WARNING: Property " + allProps.get(i-1) + " has value of '" + value + "', was this intended? <br />");
-											}
-											// check for abbreviations error
-											else if(value.length() == 2 && value.contains(".")) {
-												warnings.add("- WARNING: Property " + allProps.get(i-1) + " has value of '" + value + "', please avoid abbreviations <br />");
-											}
-										}
+									// Format property for ontology query
+									String property = allProps.get(i-1);
+									property = property.split(" ")[0];
+									property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
+
+									if(!ontology.validType(api_query, property, value)) {									
+										warnings.add("- WARNING: Property " + allProps.get(i-1) + " received value '" + value + "'  but expects a value of type " + ontology.getDataRange(property) + "<br />");
+										sbans.append("<br />");
 									}
 									else {
 										sbans.append("&emsp; - " + value + "<br /><br />");
-						
+										
 										/*** CHECKING FOR WARNINGS ***/
 										// check for shortened value error
 										if(value.length() == 1) {
