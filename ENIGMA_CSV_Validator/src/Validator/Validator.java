@@ -306,9 +306,7 @@ public class Validator {
 					}
 										
 					for(int i=1; i<currentarr.length; i++) {
-						if(currentarr.length >= i) {
-							boolean error = false; // Flag for error
-							
+						if(currentarr.length >= i) {							
 							String arr[]=currentarr[i].split("; ");
 							
 							List<String> values=Arrays.asList(arr); // gets potential list of values for a property
@@ -326,9 +324,14 @@ public class Validator {
 									property = property.split(" ")[0];
 									property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
 
-									if(!ontology.validType(api_query, property, value)) {									
-										errors.add("- ERROR: Property " + allProps.get(i-1) + " received value '" + value + "'  but expects a value of type " + ontology.getDataRange(property) + "<br />");
-										error = true;
+									if(!ontology.validType(api_query, property, value)) {		
+										if(ontology.isObjectProp(property)) {
+											warnings.add("- Warning: Property " + allProps.get(i-1) + " received value '" + value + "' but a page for this value doesn't exist <br />");
+											valid_values.add(value);
+										}
+										else {
+											warnings.add("- Warning: Property " + allProps.get(i-1) + " received value '" + value + "' but expects a value of type " + ontology.getDataRange(property) + ". Value won't be added! <br />");
+										}
 									}
 									else {
 										valid_values.add(value);
@@ -352,7 +355,7 @@ public class Validator {
 								warnings.add("- WARNING: Property " + allProps.get(i-1) + " contains an empty value and will not be added <br />");
 							}
 							
-							if(!error && !valid_values.isEmpty()) {
+							if(!valid_values.isEmpty()) {
 								sbans.append("- Property " + allProps.get(i-1) + " will be added with values: <br />");
 								for(String value : valid_values) {
 									sbans.append("&emsp; - " + value + "<br /><br />");
@@ -376,20 +379,6 @@ public class Validator {
 						
 						sbans.append("******************************************************************* </font><br /><br />");
 					}
-					
-					/*** ADDING ERRORS TO REPORT ***/
-					if(!errors.isEmpty()) {
-						sbans.append("<font color=red> ******************************************************************* <br />");
-						
-						sbans.append("<strong> ALERT: " + errors.size() + " errors(s) found </strong><br />");
-						
-						for(String error : errors) {
-							sbans.append(error + "<br />");
-						}
-						
-						sbans.append("******************************************************************* </font><br /><br />");
-					}
-					
 					sbans.append("------------------------------------------------------------------------------------------------<br /><br /><br /><br />");
 					
 				}

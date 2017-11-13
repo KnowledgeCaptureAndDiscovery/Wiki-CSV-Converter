@@ -96,7 +96,8 @@ public class Ontology {
 				while(i.hasNext()) {
 					prop = i.next();
 				    s = prop.asLiteral().toString();
-				    if(property_val.toLowerCase() == s.toLowerCase()) {
+
+				    if(property_val.toLowerCase().equals(s.toLowerCase())) {
 				    	return true;
 				    }
 				}
@@ -135,6 +136,16 @@ public class Ontology {
         }   
         
         return false;
+    }
+    
+    // Checks if property is an object property
+    public boolean isObjectProp(String property_str) {
+    	OntProperty property = model.getOntProperty(Constants.ONTOLOGY_NS + property_str);
+    	
+    	 if(property.isObjectProperty()) {
+    		 return true;
+    	 }
+    	 return false;
     }
     
     // Checks if input is a positive integer
