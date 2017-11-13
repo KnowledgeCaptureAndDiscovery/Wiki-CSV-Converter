@@ -41,31 +41,6 @@ class Category {
 
 public class Validator {
 	
-	// Set of int properties
-	public final static Set<String> INT_PROPERTIES = Collections.unmodifiableSet(
-		new HashSet<String>(Arrays.asList(
-			"HasNumberOfParticipants (L)", 
-			"HasNumberOfFemale (L)",
-			"HasNumberOfMale (L)",
-			"JoinedEnigmaInYear (L)"
-			)
-		)
-	);
-	
-	// Set of boolean properties
-	public final static Set<String> BOOLEAN_PROPERTIES = Collections.unmodifiableSet(
-		new HashSet<String>(Arrays.asList(
-			"IsCaseControl (L)", 
-			"IsFamilyBased (L)",
-			"IsPopulationBased (L)",
-			"IncludesFemale (L)",
-			"IncludesMale (L)",
-			"SexDeterminedGenetically (L)",
-			"IsNoLongerActive (L)"
-			)
-		)
-	);
-	
 	// Generates validation report
 	public String getValidationReport(String loc, String output) throws Exception {
 		StringBuilder sbans = new StringBuilder();
@@ -80,6 +55,8 @@ public class Validator {
 			Category c = new Category();
 			
 			int count = 0;
+			
+			Ontology ontology = null;
 			
 			HashMap<String,ArrayList<String>> hmap = new HashMap<>();
 			String prop = null; // property
@@ -97,6 +74,14 @@ public class Validator {
 				else if(count==1) {
 					//setting the Type of the Category Instance
 					c.setType(currentarr[1]);
+					
+					// Initialize ontology object with corresponding owl file
+					if(c.getType().contains("Project")) {
+						ontology = new Ontology(Constants.PROJECT_ONTOLOGY);
+					}
+					else if(c.getType().contains("WorkingGroup")) {
+						ontology = new Ontology(Constants.WORKING_GROUP_ONTOLOGY);
+					}
 					
 					String entity = c.getName();
 					entity = entity.replaceAll(" ", "+");
@@ -119,16 +104,7 @@ public class Validator {
 						if(prop==null) {
 							prop=currentarr[0];
 							
-							/*** CHECKING FOR PROPERTY NAMING WARNINGS ***/
-							// Initialize ontology object with corresponding owl file
-							Ontology ontology = null;
-							if(c.getType().contains("Project")) {
-								ontology = new Ontology(Constants.PROJECT_ONTOLOGY);
-							}
-							else if(c.getType().contains("WorkingGroup")) {
-								ontology = new Ontology(Constants.WORKING_GROUP_ONTOLOGY);
-							}
-							
+							/*** CHECKING FOR PROPERTY NAMING WARNINGS ***/							
 							// Format property for ontology query
 							String property = prop;
 							property = property.split(" ")[0];
@@ -141,29 +117,18 @@ public class Validator {
 						}
 
 						if(hmap.containsKey(prop)) {
-							boolean type_error = false;
+							// Format property for ontology query
+							String property = prop;
+							property = property.split(" ")[0];
+							property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
 							
-							// Check if property is of type int
-							if(INT_PROPERTIES.contains(prop)) {
-								// If value is not an int add a warning
-								if(!isInteger(currentarr[1])) {
-									warnings.add("- WARNING: Property " + prop + " received value '" + currentarr[1] + "'  but expects a value of type 'int' <br />");
-									sbans.append("<br />");
-									type_error = true;
-								}
+							/*** CHECKING FOR INVALID TYPE OF PROPERTY VALUE ***/
+							if(!ontology.validType(api_query, property, currentarr[1])) {									
+								warnings.add("- WARNING: Property " + prop + " received value '" + currentarr[1] + "'  but expects a value of type " + ontology.getDataRange(property) + "<br />");
+								sbans.append("<br />");
 							}
-							// Check if property is of type boolean
-							else if(BOOLEAN_PROPERTIES.contains(prop)) {
-								// If value is not a boolean add a warning
-								if(!isBoolean(currentarr[1])) {
-									warnings.add("- WARNING: Property " + prop + " received value '" + currentarr[1] + "'  but expects a value of type 'boolean' <br />");
-									sbans.append("<br />");
-									type_error = true;
-								}
-							}
-							
 							// Add property if there is no type error
-							if(!type_error) {
+							else {
 								ArrayList<String> currentAl = hmap.get(prop);
 								currentAl.add(currentarr[1]);
 								
@@ -191,34 +156,23 @@ public class Validator {
 								currentAl.add(currentarr[1]);
 								
 								for(String value : currentAl) {
-									boolean type_error = false;
+									// Format property for ontology query
+									String property = prop;
+									property = property.split(" ")[0];
+									property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
 									
-									// Check if property is of type int
-									if(INT_PROPERTIES.contains(prop)) {
-										// If value is not an int add a warning
-										if(!isInteger(value)) {
-											warnings.add("- WARNING: Property " + prop + " received value '" + value + "'  but expects a value of type 'int' <br />");
-											sbans.append("<br />");
-											type_error = true;
-										}
+									/*** CHECKING FOR INVALID TYPE OF PROPERTY VALUE ***/
+									if(!ontology.validType(api_query, property, value)) {									
+										warnings.add("- WARNING: Property " + prop + " received value '" + value + "'  but expects a value of type " + ontology.getDataRange(property) + "<br />");
+										sbans.append("<br />");
 									}
-									// Check if property is of type boolean
-									else if(BOOLEAN_PROPERTIES.contains(prop)) {
-										// If value is not a boolean add a warning
-										if(!isBoolean(value)) {
-											warnings.add("- WARNING: Property " + prop + " received value '" + value + "'  but expects a value of type 'boolean' <br />");
-											sbans.append("<br />");
-											type_error = true;
-										}
-									}
-									
 									// Add property if there is no type error
-									if(!type_error) {
+									else {
 										sbans.append("&emsp; - " + value + "<br />");
 	
 										/*** CHECKING FOR WARNINGS ***/
 										// check for shortened value error
-										if(value.length() == 1) {
+										if(value.length() == 1 && !isInteger(value)) {
 											warnings.add("- WARNING: Property " + prop + " has value of '" + value + "', was this intended? <br />");
 										}
 										// check for abbreviations error
@@ -332,6 +286,7 @@ public class Validator {
 					}
 					
 					ArrayList<String> warnings = new ArrayList<String>(); // list of warnings
+					ArrayList<String> errors = new ArrayList<String>(); // list of errors
 					
 					String currentarr[] = current.split(",");
 
@@ -352,14 +307,15 @@ public class Validator {
 										
 					for(int i=1; i<currentarr.length; i++) {
 						if(currentarr.length >= i) {
+							boolean error = false; // Flag for error
+							
 							String arr[]=currentarr[i].split("; ");
 							
 							List<String> values=Arrays.asList(arr); // gets potential list of values for a property
+							ArrayList<String> valid_values = new ArrayList<String>();
 							
 							// add property values to report if they are not empty
-							if(!values.contains("") || values.size() > 1) {
-								sbans.append("- Property " + allProps.get(i-1) + " will be added with values: <br />");
-	
+							if(!values.contains("") || values.size() > 1) {	
 								for(int k=0; k<values.size(); k++) {
 									values.set(k, values.get(k).replace('$', ','));
 								}
@@ -371,15 +327,15 @@ public class Validator {
 									property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
 
 									if(!ontology.validType(api_query, property, value)) {									
-										warnings.add("- WARNING: Property " + allProps.get(i-1) + " received value '" + value + "'  but expects a value of type " + ontology.getDataRange(property) + "<br />");
-										sbans.append("<br />");
+										errors.add("- ERROR: Property " + allProps.get(i-1) + " received value '" + value + "'  but expects a value of type " + ontology.getDataRange(property) + "<br />");
+										error = true;
 									}
 									else {
-										sbans.append("&emsp; - " + value + "<br /><br />");
+										valid_values.add(value);
 										
 										/*** CHECKING FOR WARNINGS ***/
 										// check for shortened value error
-										if(value.length() == 1) {
+										if(value.length() == 1 && !isInteger(value)) {
 											warnings.add("- WARNING: Property " + allProps.get(i-1) + " has value of '" + value + "', was this intended? <br />");
 										}
 										// check for abbreviations error
@@ -396,6 +352,13 @@ public class Validator {
 								warnings.add("- WARNING: Property " + allProps.get(i-1) + " contains an empty value and will not be added <br />");
 							}
 							
+							if(!error && !valid_values.isEmpty()) {
+								sbans.append("- Property " + allProps.get(i-1) + " will be added with values: <br />");
+								for(String value : valid_values) {
+									sbans.append("&emsp; - " + value + "<br /><br />");
+								}
+							}
+							
 							hmap.put(allProps.get(i-1), values);
 						}
 					}
@@ -409,6 +372,19 @@ public class Validator {
 						
 						for(String warning : warnings) {
 							sbans.append(warning + "<br />");
+						}
+						
+						sbans.append("******************************************************************* </font><br /><br />");
+					}
+					
+					/*** ADDING ERRORS TO REPORT ***/
+					if(!errors.isEmpty()) {
+						sbans.append("<font color=red> ******************************************************************* <br />");
+						
+						sbans.append("<strong> ALERT: " + errors.size() + " errors(s) found </strong><br />");
+						
+						for(String error : errors) {
+							sbans.append(error + "<br />");
 						}
 						
 						sbans.append("******************************************************************* </font><br /><br />");
@@ -436,14 +412,6 @@ public class Validator {
 	    catch(NumberFormatException e) {
 	        return false;
 	    }
-	}
-	
-	// Checks if input is an integer
-	public boolean isBoolean(String input) {
-		if(input.toLowerCase().equals("true") || input.toLowerCase().equals("false")) {
-			return true;
-		}
-		return false;
 	}
 	
 }
