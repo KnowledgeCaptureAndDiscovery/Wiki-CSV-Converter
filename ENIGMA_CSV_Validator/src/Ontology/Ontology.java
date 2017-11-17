@@ -84,7 +84,7 @@ public class Ontology {
         	
 			EnumeratedClass e = null;
 			ExtendedIterator<RDFNode> i = null;
-			
+						
 			// Check if property range is a set
 			if(property.getRange().asClass().isEnumeratedClass()) {
 				e = property.getRange().asClass().asEnumeratedClass();

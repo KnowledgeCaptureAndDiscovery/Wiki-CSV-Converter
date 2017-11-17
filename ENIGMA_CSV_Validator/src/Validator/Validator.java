@@ -62,7 +62,8 @@ public class Validator {
 			String prop = null; // property
 			ArrayList<String> warnings = new ArrayList<String>(); // list of warnings
 			ArrayList<String> generalWarnings = new ArrayList<String>(); // list of warnings
-
+			ArrayList<String> valid_values = new ArrayList<String>();
+			
 			while(sc.hasNextLine()) {
 				String current = sc.nextLine();
 				String currentarr[] = current.split(",");
@@ -93,11 +94,21 @@ public class Validator {
 						sbans.append("<strong>" + c.getName() +" "+c.getType()+" does not exist. A new wiki page will be created. </strong><br /><br />");
 					}
 				}
-				else if(count>=4) {
-					// if blank line continue and set property to null
-					if(current.equals(",")) {	
-						sbans.append("<br />");
+				else if(count > 3) {
+					
+					// if blank line output to report and reset variables
+					if(current.equals(",")) {
+						if(!valid_values.isEmpty()) {
+							sbans.append("- Property " + prop + " will be added with value(s): <br />");
+							for(String value : valid_values) {
+								sbans.append("&emsp; - " + value + "<br />");
+							}
+							sbans.append("<br />");
+							valid_values.clear();
+						}
+												
 						prop=null;
+						
 						continue;
 					}
 					else {
@@ -112,7 +123,7 @@ public class Validator {
 							
 							// If property doesn't exist in the ontology
 							if(!ontology.propertyExists(property)) {
-								generalWarnings.add("- WARNING: Property " + prop + " does not exist within the wiki, was this addition intended? <br />");
+								generalWarnings.add("- WARNING: Undefined Property Error – Property " + prop + " does not exist within the wiki and will be ignored! <br />");
 							}
 						}
 
@@ -123,36 +134,41 @@ public class Validator {
 							property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
 							
 							/*** CHECKING FOR INVALID TYPE OF PROPERTY VALUE ***/
-							if(!ontology.validType(api_query, property, currentarr[1])) {									
-								warnings.add("- WARNING: Property " + prop + " received value '" + currentarr[1] + "'  but expects a value of type " + ontology.getDataRange(property) + "<br />");
-								sbans.append("<br />");
+							if(!ontology.validType(api_query, property, currentarr[1])) {		
+								if(ontology.isObjectProp(property)) {
+									warnings.add("- NOTE: Property " + prop + " received value '" + currentarr[1] + "' a page for this value doesn't exist, so one will be created <br />");
+									valid_values.add(currentarr[1]);
+								}
+								else {
+									warnings.add("- WARNING: Incompatible Type Error – Property " + prop + " received value '" + currentarr[1] + "' but expects a value of type " + ontology.getDataRange(property) + ". Value will not be added! <br />");
+								}
 							}
 							// Add property if there is no type error
 							else {
 								ArrayList<String> currentAl = hmap.get(prop);
 								currentAl.add(currentarr[1]);
-								
-								sbans.append("&emsp; - " + currentarr[1]+"<br />");
-								
+																
 								hmap.put(prop, currentAl);
 								
 								/*** CHECKING FOR WARNINGS ***/
 								// check for shortened value error
 								if(currentarr[1].length() == 1) {
-									warnings.add("- WARNING: Property " + prop + " has value of '" + currentarr[1] + "', was this intended? <br />");
+									warnings.add("- NOTE: Property " + prop + " has shortened value of '" + currentarr[1] + "', was this intended? <br />");
+									valid_values.add(currentarr[1]);
 								}
 								// check for abbreviations error
 								else if(currentarr[1].length() == 2 && currentarr[1].contains(".")) {
-									warnings.add("- WARNING: Property " + prop + " has value of '" + currentarr[1] + "', please avoid abbreviations <br />");
+									warnings.add("- WARNING: Abbreviations Error – Property " + prop + " value '" + currentarr[1] + "' will not be added! <br />");
+								}
+								else {
+									valid_values.add(currentarr[1]);
 								}
 							}
 						}
 						else {
 							ArrayList<String> currentAl=new ArrayList<>();
 							
-							if(currentarr.length > 1) {
-								sbans.append("- Property " + prop + " will be added with values: <br />");
-								
+							if(currentarr.length > 1) {								
 								currentAl.add(currentarr[1]);
 								
 								for(String value : currentAl) {
@@ -162,31 +178,38 @@ public class Validator {
 									property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
 									
 									/*** CHECKING FOR INVALID TYPE OF PROPERTY VALUE ***/
-									if(!ontology.validType(api_query, property, value)) {									
-										warnings.add("- WARNING: Property " + prop + " received value '" + value + "'  but expects a value of type " + ontology.getDataRange(property) + "<br />");
-										sbans.append("<br />");
-									}
+									if(!ontology.validType(api_query, property, value)) {		
+										if(ontology.isObjectProp(property)) {
+											warnings.add("- NOTE: Property " + prop + " received value '" + value + "' a page for this value doesn't exist, so one will be created <br />");
+											valid_values.add(value);
+										}
+										else {
+											warnings.add("- WARNING: Incompatible Type Error – Property " + prop + " received value '" + value + "' but expects a value of type " + ontology.getDataRange(property) + ". Value will not be added! <br />");
+										}
+									}									
 									// Add property if there is no type error
-									else {
-										sbans.append("&emsp; - " + value + "<br />");
-	
+									else {	
 										/*** CHECKING FOR WARNINGS ***/
-										// check for shortened value error
+										// check for shortened value note
 										if(value.length() == 1 && !isInteger(value)) {
-											warnings.add("- WARNING: Property " + prop + " has value of '" + value + "', was this intended? <br />");
+											warnings.add("- NOTE: Property " + prop + " has shortened value of '" + value + "', was this intended? <br />");
+											valid_values.add(value);
 										}
 										// check for abbreviations error
-										else if(currentarr[1].length() == 2 && currentarr[1].contains(".")) {
-											warnings.add("- WARNING: Property " + prop + " has value of '" + currentarr[1] + "', please avoid abbreviations <br />");
+										else if(value.length() == 2 && value.contains(".")) {
+											warnings.add("- WARNING: Abbreviations Error – Property " + prop + " value '" + value + "' will not be added! <br />");
+										}
+										else {
+											valid_values.add(value);
 										}
 									}
 								}
-			
+								
 								hmap.put(prop, currentAl);
 							}
-							/*** CHECKING FOR EMPTY STRING WARNING ***/
+							/*** CHECKING FOR EMPTY STRING NOTE ***/
 							else {
-								warnings.add("- WARNING: Property " + currentarr[0] + " contains an empty value and will not be added <br />");
+								warnings.add("- NOTE: Empty value found for property " + currentarr[0] + " and will not be added! <br />");
 							}
 						}
 					}
@@ -254,7 +277,7 @@ public class Validator {
 						
 						// If property doesn't exist in the ontology
 						if(!ontology.propertyExists(property)) {
-							generalWarnings.add("- WARNING: Property " + currentarr[i] + " does not exist within the wiki, was this addition intended? <br />");
+							generalWarnings.add("- WARNING: Undefined Property Error – Property " + currentarr[i] + " does not exist within the wiki and will be ignored! <br />");
 						}
 					}
 				}
@@ -286,7 +309,6 @@ public class Validator {
 					}
 					
 					ArrayList<String> warnings = new ArrayList<String>(); // list of warnings
-					ArrayList<String> errors = new ArrayList<String>(); // list of errors
 					
 					String currentarr[] = current.split(",");
 
@@ -323,40 +345,41 @@ public class Validator {
 									String property = allProps.get(i-1);
 									property = property.split(" ")[0];
 									property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
-
+									
 									if(!ontology.validType(api_query, property, value)) {		
 										if(ontology.isObjectProp(property)) {
-											warnings.add("- Warning: Property " + allProps.get(i-1) + " received value '" + value + "' but a page for this value doesn't exist <br />");
+											warnings.add("- NOTE: Property " + allProps.get(i-1) + " received value '" + value + "' a page for this value doesn't exist, so one will be created <br />");
 											valid_values.add(value);
 										}
 										else {
-											warnings.add("- Warning: Property " + allProps.get(i-1) + " received value '" + value + "' but expects a value of type " + ontology.getDataRange(property) + ". Value won't be added! <br />");
+											warnings.add("- WARNING: Incompatible Type Error – Property " + allProps.get(i-1) + " received value '" + value + "' but expects a value of type " + ontology.getDataRange(property) + ". Value will not be added! <br />");
 										}
 									}
-									else {
-										valid_values.add(value);
-										
+									else {										
 										/*** CHECKING FOR WARNINGS ***/
 										// check for shortened value error
 										if(value.length() == 1 && !isInteger(value)) {
-											warnings.add("- WARNING: Property " + allProps.get(i-1) + " has value of '" + value + "', was this intended? <br />");
+											warnings.add("- NOTE: Property " + allProps.get(i-1) + " has shortened value of '" + value + "', was this intended? <br />");
+											valid_values.add(value);
 										}
 										// check for abbreviations error
 										else if(value.length() == 2 && value.contains(".")) {
-											warnings.add("- WARNING: Property " + allProps.get(i-1) + " has value of '" + value + "', please avoid abbreviations <br />");
+											warnings.add("- WARNING: Abbreviations Error – Property " + allProps.get(i-1) + " value '" + value + "' will not be added! <br />");
+										}
+										else {
+											valid_values.add(value);
 										}
 									}
 								}
 							}
 							
-							/*** CHECKING FOR EMPTY STRING WARNING ***/
+							/*** CHECKING FOR EMPTY STRING NOTE ***/
 							if(values.contains("")) {
-								// check for empty value error
-								warnings.add("- WARNING: Property " + allProps.get(i-1) + " contains an empty value and will not be added <br />");
+								warnings.add("- NOTE: Empty value found for property " + allProps.get(i-1) + " and will not be added! <br />");
 							}
 							
 							if(!valid_values.isEmpty()) {
-								sbans.append("- Property " + allProps.get(i-1) + " will be added with values: <br />");
+								sbans.append("- Property " + allProps.get(i-1) + " will be added with value(s): <br />");
 								for(String value : valid_values) {
 									sbans.append("&emsp; - " + value + "<br /><br />");
 								}
