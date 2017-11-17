@@ -73,7 +73,7 @@ public class Ontology {
         	return true;
         }
         // Object Property Type Validation
-        else if(property.isObjectProperty()) {   		
+        else if(property.isObjectProperty()) {   
     		if(api_query.doesExist(property_val)) {
     			return true;
     		}
@@ -142,10 +142,13 @@ public class Ontology {
     public boolean isObjectProp(String property_str) {
     	OntProperty property = model.getOntProperty(Constants.ONTOLOGY_NS + property_str);
     	
-    	 if(property.isObjectProperty()) {
+    	if(property == null) {
+    		return false;
+    	}
+    	else if(property.isObjectProperty()) {
     		 return true;
-    	 }
-    	 return false;
+    	}
+    	return false;
     }
     
     // Checks if input is a positive integer

@@ -28,6 +28,7 @@ public class APIQuery {
 		//CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
 		APIQuery api_query = new APIQuery();
 		api_query.login();
+		System.out.println(api_query.doesExist("AMC", "Cohort (L)"));
 	}
 	
 	public APIQuery() {
@@ -144,5 +145,62 @@ public class APIQuery {
 			return false;
 		}
 	}	
+	
+	// Checks if parameter exists in the wiki with given category
+	public boolean doesExist(String entity, String category) {
+		try {
+			String link = Constants.WIKI + "/api.php?&format=json&action=query&prop=categories&titles="+entity;
+			URL url = new URL(link);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+	
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			
+	        JSONParser parser = new JSONParser();
+	        Object obj = parser.parse(response.toString());
+	        JSONObject jsonObject = (JSONObject) obj;
+	        
+            JSONObject query = (JSONObject) jsonObject.get("query");
+            JSONObject pages = (JSONObject) query.get("pages");
+            
+            String pages_str = pages.toString();
+            String pageid_str = pages_str.substring(pages_str.indexOf("\"") + 1);
+            pageid_str = pageid_str.substring(0, pageid_str.indexOf("\""));
+            
+            if(pageid_str.equals("-1")) {
+            	return false;
+            }
+            
+            JSONObject pageid = (JSONObject) pages.get(pageid_str);
+            JSONArray categories = (JSONArray) pageid.get("categories");
+
+            for(int i = 0; i < categories.size(); i++) {
+            	JSONObject result = (JSONObject) categories.get(i);
+            	String c_title = (String) result.get("title");
+            	c_title = c_title.substring(c_title.indexOf(":") + 1);
+            	
+            	if(c_title.equals(category)) {
+        			in.close();
+            		return true;
+            	}
+            }
+            
+			in.close();
+            return false;		
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 	
 }

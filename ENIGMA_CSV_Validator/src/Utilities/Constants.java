@@ -6,6 +6,7 @@ public class Constants {
 	
 	// WIKI Location
 	public static String WIKI = "http://organicdatacuration.org/enigma_sandbox";
+	public static String WIKI_INDEX = "http://organicdatacuration.org/enigma_sandbox/index.php/";
 	
 	
 	// Ontology NameSpace

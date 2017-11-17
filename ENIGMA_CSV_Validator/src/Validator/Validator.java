@@ -60,9 +60,13 @@ public class Validator {
 			
 			HashMap<String,ArrayList<String>> hmap = new HashMap<>();
 			String prop = null; // property
+			
 			ArrayList<String> warnings = new ArrayList<String>(); // list of warnings
 			ArrayList<String> generalWarnings = new ArrayList<String>(); // list of warnings
-			ArrayList<String> valid_values = new ArrayList<String>();
+			ArrayList<String> valid_values = new ArrayList<String>(); // list of valid values
+			ArrayList<String> notes = new ArrayList<String>(); // list of notes;
+			
+			int warnings_index = 0;
 			
 			while(sc.hasNextLine()) {
 				String current = sc.nextLine();
@@ -87,12 +91,13 @@ public class Validator {
 					String entity = c.getName();
 					entity = entity.replaceAll(" ", "+");
 					
-					if(api_query.doesExist(entity)) {
+					if(api_query.doesExist(entity, c.getType())) {
 						sbans.append("<strong>" + c.getName() +" "+c.getType()+" already exists. Your csv data will overwrite any existing values with the wiki. </strong><br /><br />");
 					}
 					else {
 						sbans.append("<strong>" + c.getName() +" "+c.getType()+" does not exist. A new wiki page will be created. </strong><br /><br />");
 					}
+					warnings_index = sbans.length();
 				}
 				else if(count > 3) {
 					
@@ -136,7 +141,7 @@ public class Validator {
 							/*** CHECKING FOR INVALID TYPE OF PROPERTY VALUE ***/
 							if(!ontology.validType(api_query, property, currentarr[1])) {		
 								if(ontology.isObjectProp(property)) {
-									warnings.add("- NOTE: Property " + prop + " received value '" + currentarr[1] + "' a page for this value doesn't exist, so one will be created <br />");
+									notes.add("- NOTE: Property " + prop + " received value '" + currentarr[1] + "' a page for this value doesn't exist, so one will be created <br />");
 									valid_values.add(currentarr[1]);
 								}
 								else {
@@ -153,7 +158,7 @@ public class Validator {
 								/*** CHECKING FOR WARNINGS ***/
 								// check for shortened value error
 								if(currentarr[1].length() == 1) {
-									warnings.add("- NOTE: Property " + prop + " has shortened value of '" + currentarr[1] + "', was this intended? <br />");
+									notes.add("- NOTE: Property " + prop + " has shortened value of '" + currentarr[1] + "', was this intended? <br />");
 									valid_values.add(currentarr[1]);
 								}
 								// check for abbreviations error
@@ -161,7 +166,13 @@ public class Validator {
 									warnings.add("- WARNING: Abbreviations Error – Property " + prop + " value '" + currentarr[1] + "' will not be added! <br />");
 								}
 								else {
-									valid_values.add(currentarr[1]);
+									// Hyperlink existing objects
+									if(ontology.isObjectProp(property)) {
+										valid_values.add(hyperlink(currentarr[1]));
+									}
+									else{
+										valid_values.add(currentarr[1]);
+									}								
 								}
 							}
 						}
@@ -180,7 +191,7 @@ public class Validator {
 									/*** CHECKING FOR INVALID TYPE OF PROPERTY VALUE ***/
 									if(!ontology.validType(api_query, property, value)) {		
 										if(ontology.isObjectProp(property)) {
-											warnings.add("- NOTE: Property " + prop + " received value '" + value + "' a page for this value doesn't exist, so one will be created <br />");
+											notes.add("- NOTE: Property " + prop + " received value '" + value + "' a page for this value doesn't exist, so one will be created <br />");
 											valid_values.add(value);
 										}
 										else {
@@ -192,7 +203,7 @@ public class Validator {
 										/*** CHECKING FOR WARNINGS ***/
 										// check for shortened value note
 										if(value.length() == 1 && !isInteger(value)) {
-											warnings.add("- NOTE: Property " + prop + " has shortened value of '" + value + "', was this intended? <br />");
+											notes.add("- NOTE: Property " + prop + " has shortened value of '" + value + "', was this intended? <br />");
 											valid_values.add(value);
 										}
 										// check for abbreviations error
@@ -200,7 +211,13 @@ public class Validator {
 											warnings.add("- WARNING: Abbreviations Error – Property " + prop + " value '" + value + "' will not be added! <br />");
 										}
 										else {
-											valid_values.add(value);
+											// Hyperlink existing objects
+											if(ontology.isObjectProp(property)) {
+												valid_values.add(hyperlink(value));
+											}
+											else{
+												valid_values.add(value);
+											}										
 										}
 									}
 								}
@@ -209,7 +226,7 @@ public class Validator {
 							}
 							/*** CHECKING FOR EMPTY STRING NOTE ***/
 							else {
-								warnings.add("- NOTE: Empty value found for property " + currentarr[0] + " and will not be added! <br />");
+								notes.add("- NOTE: Empty value found for property " + currentarr[0] + " and will not be added! <br />");
 							}
 						}
 					}
@@ -220,12 +237,26 @@ public class Validator {
 			/*** ADDING WARNINGS TO REPORT ***/
 			warnings.addAll(generalWarnings);
 			if(!warnings.isEmpty()) {
-				sbans.append("<font color=red> ******************************************************************* <br />");
+				String warnings_str = "";
+				warnings_str += "<font color=red> ******************************************************************* <br />";
 				
-				sbans.append("<strong> ALERT: " + warnings.size() + " warning(s) found </strong><br />");
+				warnings_str += "<strong> ALERT: " + warnings.size() + " warning(s) found </strong><br />";
 				
 				for(String warning : warnings) {
-					sbans.append(warning + "<br />");
+					warnings_str += warning + "<br />";
+				}
+				
+				warnings_str += "******************************************************************* </font><br /><br />";
+				sbans.insert(warnings_index, warnings_str);
+			}
+			/*** ADDING NOTES TO REPORT ***/
+			if(!notes.isEmpty()) {
+				sbans.append("<font color=#636363> ******************************************************************* <br />");
+				
+				sbans.append("<strong> ALERT: " + notes.size() + " notes(s) found </strong><br />");
+				
+				for(String note : notes) {
+					sbans.append(note + "<br />");
 				}
 				
 				sbans.append("******************************************************************* </font><br /><br />");
@@ -309,6 +340,7 @@ public class Validator {
 					}
 					
 					ArrayList<String> warnings = new ArrayList<String>(); // list of warnings
+					ArrayList<String> notes = new ArrayList<String>(); // list of notes
 					
 					String currentarr[] = current.split(",");
 
@@ -320,13 +352,15 @@ public class Validator {
 					entity = entity.replaceAll(" ", "+");
 					
 					// Create API query object 
-					if(api_query.doesExist(entity)) {
+					if(api_query.doesExist(entity, c.getType())) {
 						sbans.append("<strong>" + c.getName() +" "+c.getType()+" already exists. Your csv data will overwrite any existing values with the wiki. </strong><br /><br />");
 					}
 					else {
 						sbans.append("<strong>" + c.getName() +" "+c.getType()+" does not exist. A new wiki page will be created. </strong><br /><br />");
 					}
-										
+					
+					int warnings_index = sbans.length(); // Index to append warnings
+					
 					for(int i=1; i<currentarr.length; i++) {
 						if(currentarr.length >= i) {							
 							String arr[]=currentarr[i].split("; ");
@@ -348,7 +382,7 @@ public class Validator {
 									
 									if(!ontology.validType(api_query, property, value)) {		
 										if(ontology.isObjectProp(property)) {
-											warnings.add("- NOTE: Property " + allProps.get(i-1) + " received value '" + value + "' a page for this value doesn't exist, so one will be created <br />");
+											notes.add("- NOTE: Property " + allProps.get(i-1) + " received value '" + value + "' a page for this value doesn't exist, so one will be created <br />");
 											valid_values.add(value);
 										}
 										else {
@@ -359,7 +393,7 @@ public class Validator {
 										/*** CHECKING FOR WARNINGS ***/
 										// check for shortened value error
 										if(value.length() == 1 && !isInteger(value)) {
-											warnings.add("- NOTE: Property " + allProps.get(i-1) + " has shortened value of '" + value + "', was this intended? <br />");
+											notes.add("- NOTE: Property " + allProps.get(i-1) + " has shortened value of '" + value + "', was this intended? <br />");
 											valid_values.add(value);
 										}
 										// check for abbreviations error
@@ -367,7 +401,13 @@ public class Validator {
 											warnings.add("- WARNING: Abbreviations Error – Property " + allProps.get(i-1) + " value '" + value + "' will not be added! <br />");
 										}
 										else {
-											valid_values.add(value);
+											// Hyperlink existing objects
+											if(ontology.isObjectProp(property)) {
+												valid_values.add(hyperlink(value));
+											}
+											else{
+												valid_values.add(value);
+											}
 										}
 									}
 								}
@@ -375,7 +415,7 @@ public class Validator {
 							
 							/*** CHECKING FOR EMPTY STRING NOTE ***/
 							if(values.contains("")) {
-								warnings.add("- NOTE: Empty value found for property " + allProps.get(i-1) + " and will not be added! <br />");
+								notes.add("- NOTE: Empty value found for property " + allProps.get(i-1) + " and will not be added! <br />");
 							}
 							
 							if(!valid_values.isEmpty()) {
@@ -392,12 +432,26 @@ public class Validator {
 					/*** ADDING WARNINGS TO REPORT ***/
 					warnings.addAll(generalWarnings);
 					if(!warnings.isEmpty()) {
-						sbans.append("<font color=red> ******************************************************************* <br />");
+						String warnings_str = "";
+						warnings_str += "<font color=red> ******************************************************************* <br />";
 						
-						sbans.append("<strong> ALERT: " + warnings.size() + " warning(s) found </strong><br />");
+						warnings_str += "<strong> ALERT: " + warnings.size() + " warning(s) found </strong><br />";
 						
 						for(String warning : warnings) {
-							sbans.append(warning + "<br />");
+							warnings_str += warning + "<br />";
+						}
+						
+						warnings_str += "******************************************************************* </font><br /><br />";
+						sbans.insert(warnings_index, warnings_str);
+					}
+					/*** ADDING NOTES TO REPORT ***/
+					if(!notes.isEmpty()) {
+						sbans.append("<font color=#636363> ******************************************************************* <br />");
+						
+						sbans.append("<strong> ALERT: " + notes.size() + " notes(s) found </strong><br />");
+						
+						for(String note : notes) {
+							sbans.append(note + "<br />");
 						}
 						
 						sbans.append("******************************************************************* </font><br /><br />");
@@ -416,7 +470,7 @@ public class Validator {
 	}
 	
 	// Checks if input is an integer
-	public boolean isInteger(String input) {
+	private boolean isInteger(String input) {
 	    try {
 	        Integer.parseInt(input);
 	        return true;
@@ -424,6 +478,11 @@ public class Validator {
 	    catch(NumberFormatException e) {
 	        return false;
 	    }
+	}
+	
+	private String hyperlink(String value) {
+		String value_asLink = value.replace(" ", "_");
+		return "<a href=" + Constants.WIKI_INDEX+value_asLink + ">" + value + "</a>";
 	}
 	
 }
