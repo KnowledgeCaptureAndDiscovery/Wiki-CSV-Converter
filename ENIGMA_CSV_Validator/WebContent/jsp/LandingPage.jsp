@@ -34,6 +34,22 @@
 				    }
 				} 
 			};
+			
+			function validateForm() {
+			    var file = document.getElementById("upload_button").value.split('\\').pop();
+			    
+			    if (file != "cohort.csv" &&
+			    	file != "organization.csv" &&
+			    	file != "person.csv" &&
+			    	file != "project.csv" &&
+			    	file != "workinggroup.csv") {
+			        alert("ERROR: Incorrect file naming convention");
+			        return false;
+			    }
+			    else {
+			    	return true;
+			    }
+			}	
 		</script>
 	</head>
 	<body>
@@ -43,8 +59,9 @@
 		<div id="header_line"></div>
 		<h1 id="header">CSV Validator and Converter</h1>		
 		<div id="upload_form">
-			<form method="post" action="../ValidatorServlet" enctype="multipart/form-data">
-		 		Select a csv file to upload: <input id="upload_button" type="file" name="img"> <input id="submit_button" type="submit">
+			<form method="post" action="../ValidatorServlet" enctype="multipart/form-data" onsubmit="return validateForm()">
+		 		Select a csv file to upload: <input id="upload_button" type="file" name="img"> 
+		 		<input id="submit_button" type="submit">
 			</form>
 		</div>
 		<div id="report_container">
