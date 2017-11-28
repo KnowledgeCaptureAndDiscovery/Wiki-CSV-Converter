@@ -50,7 +50,7 @@ public class Validator {
 		APIQuery api_query = new APIQuery(); 
 		api_query.login();
 		
-		if(sub.contains("person") || sub.contains("organization") || sub.contains("cohort") || sub.contains("project") || sub.contains("workinggroup")) {			
+		if(sub.contains("csv")) {			
 			Scanner sc = new Scanner(new File(loc));
 			
 			Category c=new Category();
@@ -80,6 +80,12 @@ public class Validator {
 					else if(c.getType().contains("Cohort")) {
 						ontology = new Ontology(Constants.COHORT_ONTOLOGY);
 					}
+					else if(c.getType().contains("Project")) {
+						ontology = new Ontology(Constants.PROJECT_ONTOLOGY);
+					}
+					else if(c.getType().contains("WorkingGroup")) {
+						ontology = new Ontology(Constants.WORKING_GROUP_ONTOLOGY);
+					}
 					
 					for(int i=1; i<currentarr.length; i++) {
 						allProps.add(currentarr[i]);
@@ -96,7 +102,7 @@ public class Validator {
 					}
 				}
 				else if(count > 0) {
-					
+					System.out.println(current);
 					if(current.contains("\"")) {
 						String tempcurr = "";
 						String doublequote = "";
@@ -231,7 +237,7 @@ public class Validator {
 					if(!notes.isEmpty()) {
 						sbans.append("<font color=#636363> ******************************************************************* <br />");
 						
-						sbans.append("<strong> ALERT: " + notes.size() + " notes(s) found </strong><br />");
+						sbans.append("<strong> ALERT: " + notes.size() + " note(s) found </strong><br />");
 						
 						for(String note : notes) {
 							sbans.append(note + "<br />");

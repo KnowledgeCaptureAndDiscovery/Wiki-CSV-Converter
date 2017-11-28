@@ -8,8 +8,11 @@
 		<link rel="stylesheet" type="text/css" href="../css/LandingPage.css"/>
 		<script>
 			window.onload = function() { 
+				var loader = document.getElementById("loader");
+				loader.style.display = "none";
+				
 				// Get the modal
-				var modal = document.getElementById('report');
+				var modal = document.getElementById("report");
 				
 				// Get the button that opens the modal
 				var btn = document.getElementById("popup_button");
@@ -36,17 +39,15 @@
 			};
 			
 			function validateForm() {
-			    var file = document.getElementById("upload_button").value.split('\\').pop();
+			    var extension = document.getElementById("upload_button").value.split('.').pop();
 			    
-			    if (file != "cohort.csv" &&
-			    	file != "organization.csv" &&
-			    	file != "person.csv" &&
-			    	file != "project.csv" &&
-			    	file != "workinggroup.csv") {
-			        alert("ERROR: Incorrect file naming convention");
+			    if (extension != "csv") {
+			        alert("ERROR: Incorrect file format, please use csv.");
 			        return false;
 			    }
 			    else {
+			    	var loader = document.getElementById("loader");
+					loader.style.display = "block";
 			    	return true;
 			    }
 			}	
@@ -60,8 +61,10 @@
 		<h1 id="header">CSV Validator and Converter</h1>		
 		<div id="upload_form">
 			<form method="post" action="../ValidatorServlet" enctype="multipart/form-data" onsubmit="return validateForm()">
-		 		Select a csv file to upload: <input id="upload_button" type="file" name="img"> 
+		 		<div id="select_header">Select a csv file to upload:</div> 
+		 		<input id="upload_button" type="file" name="img"> 
 		 		<input id="submit_button" type="submit">
+		 		<div id="loader"></div>
 			</form>
 		</div>
 		<div id="report_container">
