@@ -1,4 +1,10 @@
-/APIquery/
-/Validator/
-/Ontology/
+/CohortOntology.owl
+/OrganizationOntology.owl
+/PersonOntology.owl
+/ProjectOntology.owl
+/ScannerOntology.owl
+/WorkingGroupOntology.owl
 /Utilities/
+/Ontology/
+/Validator/
+/APIquery/

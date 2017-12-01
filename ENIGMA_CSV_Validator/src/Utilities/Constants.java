@@ -1,23 +1,25 @@
 package Utilities;
 
+import java.io.InputStream;
+
 // Global constants to be used 
 
 public class Constants {
 	
 	// WIKI Location
-	public static String WIKI = "http://organicdatacuration.org/enigma_sandbox";
-	public static String WIKI_INDEX = "http://organicdatacuration.org/enigma_sandbox/index.php/";
+	public static final String WIKI = "http://organicdatacuration.org/enigma_sandbox";
+	public static final String WIKI_INDEX = "http://organicdatacuration.org/enigma_sandbox/index.php/";
 	
 	
 	// Ontology NameSpace
-	public static String ONTOLOGY_NS = "https://w3id.org/enigma#";
+	public static final String ONTOLOGY_NS = "https://w3id.org/enigma#";
 	
-	// Ontology File Locations
-	public static String COHORT_ONTOLOGY = "/Users/ryanespiritu/Desktop/Enigma/EnigmaOntology/Ryan's Ontologies/CohortOntology.owl";	
-	public static String ORGANIZATION_ONTOLOGY = "/Users/ryanespiritu/Desktop/Enigma/EnigmaOntology/Ryan's Ontologies/OrganizationOntology.owl";
-	public static String PERSON_ONTOLOGY = "/Users/ryanespiritu/Desktop/Enigma/EnigmaOntology/Ryan's Ontologies/PersonOntology.owl";
-	public static String PROJECT_ONTOLOGY = "/Users/ryanespiritu/Desktop/Enigma/EnigmaOntology/Ryan's Ontologies/ProjectOntology.owl";
-	public static String SCANNER_ONTOLOGY = "/Users/ryanespiritu/Desktop/Enigma/EnigmaOntology/Ryan's Ontologies/ScannerOntology.owl";
-	public static String WORKING_GROUP_ONTOLOGY = "/Users/ryanespiritu/Desktop/Enigma/EnigmaOntology/Ryan's Ontologies/WorkingGroupOntology.owl";
+	// Ontology Files
+	public static final InputStream COHORT_ONTOLOGY = Constants.class.getResourceAsStream("/CohortOntology.owl");	
+	public static final InputStream ORGANIZATION_ONTOLOGY = Constants.class.getResourceAsStream("/OrganizationOntology.owl");
+	public static final InputStream PERSON_ONTOLOGY = Constants.class.getResourceAsStream("/PersonOntology.owl");
+	public static final InputStream PROJECT_ONTOLOGY = Constants.class.getResourceAsStream("/ProjectOntology.owl");
+	public static final InputStream SCANNER_ONTOLOGY = Constants.class.getResourceAsStream("/ScannerOntology.owl");
+	public static final InputStream WORKING_GROUP_ONTOLOGY = Constants.class.getResourceAsStream("/WorkingGroupOntology.owl");
 	
 }

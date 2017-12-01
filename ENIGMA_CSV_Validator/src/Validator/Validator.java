@@ -102,7 +102,6 @@ public class Validator {
 					}
 				}
 				else if(count > 0) {
-					System.out.println(current);
 					if(current.contains("\"")) {
 						String tempcurr = "";
 						String doublequote = "";

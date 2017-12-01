@@ -24,9 +24,9 @@ public class Ontology {
 	private OntModel model;
     
 	// Constructor, instantiates OntModel object with specified file
-	public Ontology(String file) {
+	public Ontology(InputStream cohortOntology) {
     	model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-		loadModel(file);
+		loadModel(cohortOntology);
 	}
 
 	public static void main(String[] args) {
@@ -39,13 +39,12 @@ public class Ontology {
 	}
 	
     // Load ontology model from file
-    public void loadModel(String file) {
-    	InputStream in = FileManager.get().open(file);
-        if (in == null) {
-        	throw new IllegalArgumentException( "File: " + file + " not found");
+    public void loadModel(InputStream file) {
+        if (file == null) {
+        	throw new IllegalArgumentException( "File not found");
         }
           
-        model.read(in, "");  
+        model.read(file, "");  
     }
 
     // Checks if property exists
