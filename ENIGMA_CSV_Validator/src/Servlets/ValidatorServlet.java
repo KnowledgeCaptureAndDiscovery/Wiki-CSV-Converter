@@ -1,6 +1,10 @@
 package Servlets;
 
 import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 import java.io.File;
 
 import javax.servlet.ServletException;
@@ -67,6 +71,8 @@ public class ValidatorServlet extends HttpServlet {
 		    response.sendRedirect("jsp/LandingPage.jsp"); //redirect to login menu
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			deleteFile(filePath);
 		}
     }
 	
@@ -82,6 +88,26 @@ public class ValidatorServlet extends HttpServlet {
             }
         }
         return "";
+    }
+    
+    private void deleteFile(String filepath) {
+    	 try
+         {
+             Files.deleteIfExists(Paths.get(filepath));
+         }
+         catch(NoSuchFileException e)
+         {
+             System.out.println("No such file/directory exists");
+         }
+         catch(DirectoryNotEmptyException e)
+         {
+             System.out.println("Directory is not empty.");
+         }
+         catch(IOException e)
+         {
+             System.out.println("Invalid permissions.");
+         }          
+         System.out.println("Deletion successful.");
     }
 
 }
