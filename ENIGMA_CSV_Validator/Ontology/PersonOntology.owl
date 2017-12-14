@@ -85,34 +85,10 @@
     <!-- https://w3id.org/enigma#contributesTo -->
 
     <owl:ObjectProperty rdf:about="https://w3id.org/enigma#contributesTo">
-        <owl:inverseOf rdf:resource="https://w3id.org/enigma#hasContributor"/>
         <rdfs:domain rdf:resource="https://w3id.org/enigma#Person"/>
         <rdfs:range rdf:resource="https://w3id.org/enigma#Project"/>
         <vann:example xml:lang="en">JohnSmith contributedTo BipolarProject</vann:example>
         <rdfs:comment xml:lang="en">Describes the projects that a person contributed to</rdfs:comment>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- https://w3id.org/enigma#hasAffiliate -->
-
-    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasAffiliate">
-        <owl:inverseOf rdf:resource="https://w3id.org/enigma#isAffiliatedWith"/>
-        <rdfs:domain rdf:resource="https://w3id.org/enigma#Organization"/>
-        <rdfs:range rdf:resource="https://w3id.org/enigma#Person"/>
-        <vann:example xml:lang="en">HarvardU hasAffiliate JohnSmith</vann:example>
-        <rdfs:comment xml:lang="en">Describes the people who are affiliations of an organization</rdfs:comment>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- https://w3id.org/enigma#hasContributor -->
-
-    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasContributor">
-        <rdfs:domain rdf:resource="https://w3id.org/enigma#Project"/>
-        <rdfs:range rdf:resource="https://w3id.org/enigma#Person"/>
-        <vann:example xml:lang="en">BipolarProject hasContributor JohnSmith</vann:example>
-        <rdfs:comment xml:lang="en">Describes the contributors of a project</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -128,81 +104,6 @@
     
 
 
-    <!-- https://w3id.org/enigma#hasEnigmaContact -->
-
-    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasEnigmaContact">
-        <owl:inverseOf rdf:resource="https://w3id.org/enigma#isEnigmaContactOf"/>
-        <rdfs:domain rdf:resource="https://w3id.org/enigma#Cohort"/>
-        <rdfs:range rdf:resource="https://w3id.org/enigma#Person"/>
-        <vann:example xml:lang="en">BipolarCohort hasEnigmaContact JohnSmith</vann:example>
-        <rdfs:comment xml:lang="en">Describes the contact of the cohort</rdfs:comment>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- https://w3id.org/enigma#hasInvestigator -->
-
-    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasInvestigator">
-        <owl:inverseOf rdf:resource="https://w3id.org/enigma#isInvestigatorOf"/>
-        <rdfs:domain rdf:resource="https://w3id.org/enigma#Cohort"/>
-        <rdfs:range rdf:resource="https://w3id.org/enigma#Person"/>
-        <vann:example xml:lang="en">BipolarCohort hasInvestigator JohnSmith</vann:example>
-        <rdfs:comment xml:lang="en">Describes the investigators of the cohort</rdfs:comment>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- https://w3id.org/enigma#hasPI -->
-
-    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasPI">
-        <owl:inverseOf rdf:resource="https://w3id.org/enigma#isPIOf"/>
-        <rdfs:domain rdf:resource="https://w3id.org/enigma#Cohort"/>
-        <rdfs:range rdf:resource="https://w3id.org/enigma#Person"/>
-        <vann:example xml:lang="en">Cohort1 hasPI JohnSmith</vann:example>
-        <rdfs:comment>Describes who the PI of the project is</rdfs:comment>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- https://w3id.org/enigma#hasPJuniorLead -->
-
-    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasPJuniorLead">
-        <rdfs:subPropertyOf rdf:resource="https://w3id.org/enigma#hasContributor"/>
-        <owl:inverseOf rdf:resource="https://w3id.org/enigma#isJuniorLeadOfP"/>
-        <rdfs:domain rdf:resource="https://w3id.org/enigma#Project"/>
-        <rdfs:range rdf:resource="https://w3id.org/enigma#Person"/>
-        <vann:example xml:lang="en">BipolarProject hasJuniorLead JohnSmith</vann:example>
-        <rdfs:comment xml:lang="en">Describes who the junior leads of a project are</rdfs:comment>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- https://w3id.org/enigma#hasPSeniorLead -->
-
-    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasPSeniorLead">
-        <rdfs:subPropertyOf rdf:resource="https://w3id.org/enigma#hasContributor"/>
-        <owl:inverseOf rdf:resource="https://w3id.org/enigma#isSeniorLeadOfP"/>
-        <rdfs:domain rdf:resource="https://w3id.org/enigma#Project"/>
-        <rdfs:range rdf:resource="https://w3id.org/enigma#Person"/>
-        <vann:example xml:lang="en">BipolarProject hasSeniorLead JohnSmith</vann:example>
-        <rdfs:comment xml:lang="en">Describes who the senior leads of a project are</rdfs:comment>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- https://w3id.org/enigma#hasPSpecialContributor -->
-
-    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasPSpecialContributor">
-        <rdfs:subPropertyOf rdf:resource="https://w3id.org/enigma#hasContributor"/>
-        <owl:inverseOf rdf:resource="https://w3id.org/enigma#isSpecialContributorOfP"/>
-        <rdfs:domain rdf:resource="https://w3id.org/enigma#Project"/>
-        <rdfs:range rdf:resource="https://w3id.org/enigma#Person"/>
-        <vann:example xml:lang="en">BipolarProject hasSpecialContributor JohnSmith</vann:example>
-        <rdfs:comment xml:lang="en">Describes who the special contributors of a project are</rdfs:comment>
-    </owl:ObjectProperty>
-    
-
-
     <!-- https://w3id.org/enigma#hasPublication -->
 
     <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasPublication">
@@ -214,57 +115,6 @@
     
 
 
-    <!-- https://w3id.org/enigma#hasWGJuniorLead -->
-
-    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasWGJuniorLead">
-        <rdfs:subPropertyOf rdf:resource="https://w3id.org/enigma#hasWGMember"/>
-        <owl:inverseOf rdf:resource="https://w3id.org/enigma#isJuniorLeadOfWG"/>
-        <rdfs:domain rdf:resource="https://w3id.org/enigma#WorkingGroup"/>
-        <rdfs:range rdf:resource="https://w3id.org/enigma#Person"/>
-        <vann:example xml:lang="en">BipolarWorkingGroup hasWGJuniorLead JohnSmith</vann:example>
-        <rdfs:comment xml:lang="en">Describes who the working group junior leads are</rdfs:comment>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- https://w3id.org/enigma#hasWGMember -->
-
-    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasWGMember">
-        <owl:inverseOf rdf:resource="https://w3id.org/enigma#isMemberOfWG"/>
-        <rdfs:domain rdf:resource="https://w3id.org/enigma#WorkingGroup"/>
-        <rdfs:range rdf:resource="https://w3id.org/enigma#Person"/>
-        <vann:example xml:lang="en">BipolarWorkingGroup hasMember JohnSmith</vann:example>
-        <rdfs:comment xml:lang="en">Describes who the members are in the working group/project</rdfs:comment>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- https://w3id.org/enigma#hasWGSeniorLead -->
-
-    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasWGSeniorLead">
-        <rdfs:subPropertyOf rdf:resource="https://w3id.org/enigma#hasWGMember"/>
-        <owl:inverseOf rdf:resource="https://w3id.org/enigma#isSeniorLeadOfWG"/>
-        <rdfs:domain rdf:resource="https://w3id.org/enigma#WorkingGroup"/>
-        <rdfs:range rdf:resource="https://w3id.org/enigma#Person"/>
-        <vann:example xml:lang="en">BipolarWorkingGroup hasWGSeniorLead JohnSmith</vann:example>
-        <rdfs:comment xml:lang="en">Describes who the working group senior leads are</rdfs:comment>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- https://w3id.org/enigma#hasWGSpecialContributor -->
-
-    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#hasWGSpecialContributor">
-        <rdfs:subPropertyOf rdf:resource="https://w3id.org/enigma#hasWGMember"/>
-        <owl:inverseOf rdf:resource="https://w3id.org/enigma#isSpecialContributorOfWG"/>
-        <rdfs:domain rdf:resource="https://w3id.org/enigma#WorkingGroup"/>
-        <rdfs:range rdf:resource="https://w3id.org/enigma#Person"/>
-        <vann:example xml:lang="en">BipolarWorkingGroup hasWGSpecialContributor JohnSmith</vann:example>
-        <rdfs:comment xml:lang="en">Describes who the significant contributors of the working group are</rdfs:comment>
-    </owl:ObjectProperty>
-    
-
-
     <!-- https://w3id.org/enigma#isAffiliatedWith -->
 
     <owl:ObjectProperty rdf:about="https://w3id.org/enigma#isAffiliatedWith">
@@ -272,6 +122,18 @@
         <rdfs:range rdf:resource="https://w3id.org/enigma#Organization"/>
         <vann:example xml:lang="en">JohnSmith isAffiliatedWith HarvardU</vann:example>
         <rdfs:comment xml:lang="en">Describes what organization someone is affiliated with</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://w3id.org/enigma#isDataAnalystOf -->
+
+    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#isDataAnalystOf">
+        <rdfs:subPropertyOf rdf:resource="https://w3id.org/enigma#contributesTo"/>
+        <rdfs:domain rdf:resource="https://w3id.org/enigma#Person"/>
+        <rdfs:range rdf:resource="https://w3id.org/enigma#ENIGMAPublication"/>
+        <vann:example xml:lang="en">JohnSmith isDataAnalystOf ENIGMAPublication1</vann:example>
+        <rdfs:comment xml:lang="en">Describes what publication someone is a data analyst of</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -333,6 +195,30 @@
     
 
 
+    <!-- https://w3id.org/enigma#isMainPIOf -->
+
+    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#isMainPIOf">
+        <rdfs:subPropertyOf rdf:resource="https://w3id.org/enigma#isPIOf"/>
+        <rdfs:domain rdf:resource="https://w3id.org/enigma#Person"/>
+        <rdfs:range rdf:resource="https://w3id.org/enigma#Cohort"/>
+        <vann:example xml:lang="en">JohnSmith isMainPIof Cohort1</vann:example>
+        <rdfs:comment xml:lang="en">Describes which cohorts somone is a main PI of</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://w3id.org/enigma#isMajorDataAnalystOf -->
+
+    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#isMajorDataAnalystOf">
+        <rdfs:subPropertyOf rdf:resource="https://w3id.org/enigma#isDataAnalystOf"/>
+        <rdfs:domain rdf:resource="https://w3id.org/enigma#Person"/>
+        <rdfs:range rdf:resource="https://w3id.org/enigma#ENIGMAPublication"/>
+        <vann:example xml:lang="en">JohnSmith isMajorDataAnalystOf ENIGMAPublication1</vann:example>
+        <rdfs:comment xml:lang="en">Describes what publication someone is a major data analyst of</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
     <!-- https://w3id.org/enigma#isMemberOfWG -->
 
     <owl:ObjectProperty rdf:about="https://w3id.org/enigma#isMemberOfWG">
@@ -344,13 +230,37 @@
     
 
 
+    <!-- https://w3id.org/enigma#isMinorDataAnalystOf -->
+
+    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#isMinorDataAnalystOf">
+        <rdfs:subPropertyOf rdf:resource="https://w3id.org/enigma#isDataAnalystOf"/>
+        <rdfs:domain rdf:resource="https://w3id.org/enigma#Person"/>
+        <rdfs:range rdf:resource="https://w3id.org/enigma#ENIGMAPublication"/>
+        <vann:example xml:lang="en">JohnSmith isMinorDataAnalystOf ENIGMAPublication1</vann:example>
+        <rdfs:comment xml:lang="en">Describes what publication someone is a minor data analyst of</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://w3id.org/enigma#isMinorPIOf -->
+
+    <owl:ObjectProperty rdf:about="https://w3id.org/enigma#isMinorPIOf">
+        <rdfs:subPropertyOf rdf:resource="https://w3id.org/enigma#isPIOf"/>
+        <rdfs:domain rdf:resource="https://w3id.org/enigma#Person"/>
+        <rdfs:range rdf:resource="https://w3id.org/enigma#Cohort"/>
+        <vann:example xml:lang="en">JohnSmith isMinorPIof Cohort1</vann:example>
+        <rdfs:comment xml:lang="en">Describes which cohorts somone is a minor PI of</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
     <!-- https://w3id.org/enigma#isPIOf -->
 
     <owl:ObjectProperty rdf:about="https://w3id.org/enigma#isPIOf">
         <rdfs:domain rdf:resource="https://w3id.org/enigma#Person"/>
         <rdfs:range rdf:resource="https://w3id.org/enigma#Cohort"/>
         <vann:example xml:lang="en">JohnSmith isPIof Cohort1</vann:example>
-        <rdfs:comment xml:lang="en">Describes which cohrots somone is the PI of</rdfs:comment>
+        <rdfs:comment xml:lang="en">Describes which cohorts somone is the PI of</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -482,28 +392,46 @@
                         <rdf:rest>
                             <rdf:Description>
                                 <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                <rdf:first>Graduate student</rdf:first>
+                                <rdf:first>Associate professor</rdf:first>
                                 <rdf:rest>
                                     <rdf:Description>
                                         <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                        <rdf:first>Other</rdf:first>
+                                        <rdf:first>Graduate student</rdf:first>
                                         <rdf:rest>
                                             <rdf:Description>
                                                 <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                <rdf:first>Postdoctoral researcher</rdf:first>
+                                                <rdf:first>Other</rdf:first>
                                                 <rdf:rest>
                                                     <rdf:Description>
                                                         <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                        <rdf:first>Professor</rdf:first>
+                                                        <rdf:first>Postdoctoral researcher</rdf:first>
                                                         <rdf:rest>
                                                             <rdf:Description>
                                                                 <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                                <rdf:first>Research assistant</rdf:first>
+                                                                <rdf:first>Professor</rdf:first>
                                                                 <rdf:rest>
                                                                     <rdf:Description>
                                                                         <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                                        <rdf:first>Undergraduate</rdf:first>
-                                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                                                        <rdf:first>Program director</rdf:first>
+                                                                        <rdf:rest>
+                                                                            <rdf:Description>
+                                                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                                                <rdf:first>Program manager</rdf:first>
+                                                                                <rdf:rest>
+                                                                                    <rdf:Description>
+                                                                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                                                        <rdf:first>Research assistant</rdf:first>
+                                                                                        <rdf:rest>
+                                                                                            <rdf:Description>
+                                                                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                                                                <rdf:first>Undergraduate</rdf:first>
+                                                                                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                                                                            </rdf:Description>
+                                                                                        </rdf:rest>
+                                                                                    </rdf:Description>
+                                                                                </rdf:rest>
+                                                                            </rdf:Description>
+                                                                        </rdf:rest>
                                                                     </rdf:Description>
                                                                 </rdf:rest>
                                                             </rdf:Description>

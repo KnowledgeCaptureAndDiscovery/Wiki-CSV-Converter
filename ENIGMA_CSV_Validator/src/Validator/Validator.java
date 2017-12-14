@@ -45,14 +45,14 @@ public class Validator {
 	public String getValidationReport(String loc, String output) throws Exception {
 		StringBuilder sbans = new StringBuilder();
 		String sub = loc.substring(loc.lastIndexOf("/") + 1, loc.length());
-		
+
 		// Create API query object
 		APIQuery api_query = new APIQuery(); 
 		api_query.login();
 		
 		if(sub.contains("csv")) {			
 			Scanner sc = new Scanner(new File(loc));
-			
+
 			Category c=new Category();
 			
 			int count=0;
@@ -64,8 +64,10 @@ public class Validator {
 			
 			while(sc.hasNextLine()) {
 				String current = sc.nextLine();	
+				current = current.replace("; ", ";");
+				current = current.replace("_", " ");
 
-				if(count == 0) {
+				if(count == 0 && !current.equals("")) {
 					String currentarr[]=current.split(",");
 					
 					c.setType(currentarr[0]);	
@@ -101,7 +103,7 @@ public class Validator {
 						}
 					}
 				}
-				else if(count > 0) {
+				else if(count > 0 && !current.equals("")) {
 					if(current.contains("\"")) {
 						String tempcurr = "";
 						String doublequote = "";
@@ -131,7 +133,7 @@ public class Validator {
 					ArrayList<String> notes = new ArrayList<String>(); // list of notes
 					
 					String currentarr[] = current.split(",");
-
+					
 					HashMap<String,List<String>> hmap=new HashMap<>();
 					
 					c.setName(currentarr[0]);
@@ -151,7 +153,7 @@ public class Validator {
 					
 					for(int i=1; i<currentarr.length; i++) {
 						if(currentarr.length >= i) {							
-							String arr[]=currentarr[i].split("; ");
+							String arr[]=currentarr[i].split(";");
 							
 							List<String> values=Arrays.asList(arr); // gets potential list of values for a property
 							ArrayList<String> valid_values = new ArrayList<String>();

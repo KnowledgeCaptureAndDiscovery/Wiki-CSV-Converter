@@ -62,7 +62,29 @@ public class Ontology {
     // Gets data range of property
     public String getDataRange(String property_str) {
     	OntProperty property = model.getOntProperty(Constants.ONTOLOGY_NS + property_str);
-    	return property.getRange().getLocalName();
+    	
+    	EnumeratedClass e = null;
+		ExtendedIterator<RDFNode> i = null;
+					
+		// Check if property range is a set
+		if(property.getRange().asClass().isEnumeratedClass()) {
+			e = property.getRange().asClass().asEnumeratedClass();
+			i = e.getOneOf().iterator();
+			     
+			RDFNode prop = null;
+			String prop_values = "{";
+			
+			while(i.hasNext()) {
+				prop = i.next();
+			    prop_values += prop.asLiteral().toString() + ", ";
+			}
+			prop_values = prop_values.substring(0, prop_values.length()-2) + "}";
+			return prop_values;
+		}
+		else {
+	    	return property.getRange().getLocalName();
+		}
+    	
     }
     
     // Checks if property value is consistent with type in ontology

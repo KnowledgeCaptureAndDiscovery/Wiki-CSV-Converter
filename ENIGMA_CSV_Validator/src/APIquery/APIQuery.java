@@ -153,7 +153,7 @@ public class APIQuery {
 			URL url = new URL(link);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
-			
+						
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;
 			StringBuffer response = new StringBuffer();
@@ -161,7 +161,7 @@ public class APIQuery {
 			while ((inputLine = in.readLine()) != null) {
 				response.append(inputLine);
 			}
-			
+						
 	        JSONParser parser = new JSONParser();
 	        Object obj = parser.parse(response.toString());
 	        JSONObject jsonObject = (JSONObject) obj;

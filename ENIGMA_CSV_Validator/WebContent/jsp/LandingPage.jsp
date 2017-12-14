@@ -58,7 +58,7 @@
 			<img src="../assets/enigma_logo.png" style="width:8%; height:8%;">	
 		</div>
 		<div id="header_line"></div>
-		<h1 id="header">CSV Validator and Converter</h1>		
+		<h1 id="header">ENIGMA CSV Validator</h1>		
 		<div id="upload_form">
 			<form method="post" action="../ValidatorServlet" enctype="multipart/form-data" onsubmit="return validateForm()">
 		 		<div id="select_header">Select a csv file to upload:</div> 
