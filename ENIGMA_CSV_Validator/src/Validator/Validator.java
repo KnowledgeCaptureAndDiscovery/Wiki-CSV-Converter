@@ -70,7 +70,8 @@ public class Validator {
 				if(count == 0 && !current.equals("")) {
 					String currentarr[]=current.split(",");
 					
-					c.setType(currentarr[0]);	
+					String type = currentarr[0].split(" ")[0] + " (E)";
+					c.setType(type);	
 					
 					// Initialize ontology object with corresponding owl file
 					if(c.getType().contains("Person")) {
@@ -143,7 +144,7 @@ public class Validator {
 					
 					// Create API query object 
 					if(api_query.doesExist(entity, c.getType())) {
-						sbans.append("<strong>" + c.getName() +" "+c.getType()+" already exists. Your csv data will overwrite any existing values with the wiki. </strong><br /><br />");
+						sbans.append("<strong>" + hyperlink(c.getName()) +" "+c.getType()+" already exists. Your csv data will overwrite any existing values with the wiki. </strong><br /><br />");
 					}
 					else {
 						sbans.append("<strong>" + c.getName() +" "+c.getType()+" does not exist. A new wiki page will be created. </strong><br /><br />");

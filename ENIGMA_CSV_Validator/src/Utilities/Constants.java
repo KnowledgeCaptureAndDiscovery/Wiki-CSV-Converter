@@ -5,8 +5,8 @@ package Utilities;
 public class Constants {
 	
 	// WIKI Location
-	public static final String WIKI = "http://organicdatacuration.org/enigma";
-	public static final String WIKI_INDEX = "http://organicdatacuration.org/enigma/index.php/";
+	public static final String WIKI = "http://organicdatacuration.org/enigma_new";
+	public static final String WIKI_INDEX = "http://organicdatacuration.org/enigma_new/index.php/";
 	
 	
 	// Ontology NameSpace
