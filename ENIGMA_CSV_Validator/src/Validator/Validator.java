@@ -1,7 +1,11 @@
 package Validator;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.FileReader;
 import java.util.*;
 
 import APIquery.*;
@@ -50,9 +54,12 @@ public class Validator {
 		APIQuery api_query = new APIQuery(); 
 		api_query.login();
 		
-		if(sub.contains("csv")) {			
-			Scanner sc = new Scanner(new File(loc));
-
+		if(sub.contains("csv")) {	
+            BufferedReader br = null;
+            br = new BufferedReader((
+                    new InputStreamReader(
+                            new FileInputStream(loc), "ISO-8859-1")));
+            
 			Category c=new Category();
 			
 			int count=0;
@@ -62,8 +69,9 @@ public class Validator {
 			ArrayList<String> allProps = new ArrayList<String>();
 			ArrayList<String> generalWarnings = new ArrayList<String>(); // General warnings not specific to a given csv entry
 			
-			while(sc.hasNextLine()) {
-				String current = sc.nextLine();	
+			String current = "";
+			while((current = br.readLine()) != null) {
+				
 				current = current.replace("; ", ";");
 				current = current.replace("_", " ");
 
@@ -252,7 +260,7 @@ public class Validator {
 				}
 				count++;
 			}
-			sc.close();
+			br.close();
 			
 			return sbans.toString();
 		}
