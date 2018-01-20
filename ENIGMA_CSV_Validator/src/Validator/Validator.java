@@ -43,7 +43,18 @@ class Category {
 	}
 }
 
+class ValidationThread extends Thread {
+	
+	public ValidationThread(String line, APIQuery api_query) {
+		
+	}
+}
+
 public class Validator {
+	Ontology ontology;
+	Category c = new Category();
+	ArrayList<String> allProps = new ArrayList<String>();
+	ArrayList<String> generalWarnings = new ArrayList<String>(); // General warnings not specific to a given csv entry
 	
 	// Generates validation report
 	public String getValidationReport(String loc, String output) throws Exception {
@@ -56,63 +67,20 @@ public class Validator {
 		
 		if(sub.contains("csv")) {	
             BufferedReader br = null;
-            br = new BufferedReader((
-                    new InputStreamReader(
-                            new FileInputStream(loc), "ISO-8859-1")));
-            
-			Category c=new Category();
+            br = new BufferedReader((new InputStreamReader(new FileInputStream(loc), "ISO-8859-1")));   
+						
 			
-			int count=0;
 			
-			Ontology ontology = null;
-			
-			ArrayList<String> allProps = new ArrayList<String>();
-			ArrayList<String> generalWarnings = new ArrayList<String>(); // General warnings not specific to a given csv entry
+			String first_line = br.readLine();
+			readColHeaders(first_line); // Read the column headers and initial validation setup
 			
 			String current = "";
 			while((current = br.readLine()) != null) {
-				
+							
 				current = current.replace("; ", ";");
 				current = current.replace("_", " ");
 
-				if(count == 0 && !current.equals("")) {
-					String currentarr[]=current.split(",");
-					
-					String type = currentarr[0].split(" ")[0] + " (E)";
-					c.setType(type);	
-					
-					// Initialize ontology object with corresponding owl file
-					if(c.getType().contains("Person")) {
-						ontology = new Ontology(Constants.PERSON_ONTOLOGY);
-					}
-					else if(c.getType().contains("Organization")) {
-						ontology = new Ontology(Constants.ORGANIZATION_ONTOLOGY);
-					}
-					else if(c.getType().contains("Cohort")) {
-						ontology = new Ontology(Constants.COHORT_ONTOLOGY);
-					}
-					else if(c.getType().contains("Project")) {
-						ontology = new Ontology(Constants.PROJECT_ONTOLOGY);
-					}
-					else if(c.getType().contains("WorkingGroup")) {
-						ontology = new Ontology(Constants.WORKING_GROUP_ONTOLOGY);
-					}
-					
-					for(int i=1; i<currentarr.length; i++) {
-						allProps.add(currentarr[i]);
-						
-						// Format property for ontology query
-						String property = currentarr[i];
-						property = property.split(" ")[0];
-						property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
-						
-						// If property doesn't exist in the ontology
-						if(!ontology.propertyExists(property)) {
-							generalWarnings.add("- WARNING: Undefined Property Error – Property " + currentarr[i] + " does not exist within the wiki and will be ignored! <br />");
-						}
-					}
-				}
-				else if(count > 0 && !current.equals("")) {
+				if(!current.equals("")) {
 					if(current.contains("\"")) {
 						String tempcurr = "";
 						String doublequote = "";
@@ -258,7 +226,6 @@ public class Validator {
 					sbans.append("------------------------------------------------------------------------------------------------<br /><br /><br /><br />");
 					
 				}
-				count++;
 			}
 			br.close();
 			
@@ -279,9 +246,49 @@ public class Validator {
 	    }
 	}
 	
+	private void readColHeaders(String current) {	
+		current = current.replace("; ", ";");
+		current = current.replace("_", " ");
+
+		String currentarr[]=current.split(",");
+		
+		String type = currentarr[0].split(" ")[0] + " (E)";
+		c.setType(type);	
+		
+		// Initialize ontology object with corresponding owl file
+		if(c.getType().contains("Person")) {
+			ontology = new Ontology(Constants.PERSON_ONTOLOGY);
+		}
+		else if(c.getType().contains("Organization")) {
+			ontology = new Ontology(Constants.ORGANIZATION_ONTOLOGY);
+		}
+		else if(c.getType().contains("Cohort")) {
+			ontology = new Ontology(Constants.COHORT_ONTOLOGY);
+		}
+		else if(c.getType().contains("Project")) {
+			ontology = new Ontology(Constants.PROJECT_ONTOLOGY);
+		}
+		else if(c.getType().contains("WorkingGroup")) {
+			ontology = new Ontology(Constants.WORKING_GROUP_ONTOLOGY);
+		}
+		
+		for(int i=1; i<currentarr.length; i++) {
+			allProps.add(currentarr[i]);
+			
+			// Format property for ontology query
+			String property = currentarr[i];
+			property = property.split(" ")[0];
+			property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
+			
+			// If property doesn't exist in the ontology
+			if(!ontology.propertyExists(property)) {
+				generalWarnings.add("- WARNING: Undefined Property Error – Property " + currentarr[i] + " does not exist within the wiki and will be ignored! <br />");
+			}
+		}
+	}
+	
 	private String hyperlink(String value) {
 		String value_asLink = value.replace(" ", "_");
 		return "<a href=" + Constants.WIKI_INDEX+value_asLink + ">" + value + "</a>";
-	}
-	
+	}	
 }
