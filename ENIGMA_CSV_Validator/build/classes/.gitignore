@@ -1,11 +1,5 @@
-/CohortOntology.owl
-/OrganizationOntology.owl
-/PersonOntology.owl
-/ProjectOntology.owl
-/ScannerOntology.owl
-/WorkingGroupOntology.owl
-/Utilities/
-/Ontology/
+/Servlets/
 /Validator/
 /APIquery/
-/Servlets/
+/Ontology/
+/Data/

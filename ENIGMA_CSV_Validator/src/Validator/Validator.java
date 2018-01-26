@@ -1,14 +1,14 @@
 package Validator;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.io.FileReader;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import APIquery.*;
+import Data.DataEntry;
 import Ontology.*;
 import Utilities.*;
 
@@ -43,22 +43,16 @@ class Category {
 	}
 }
 
-class ValidationThread extends Thread {
-	
-	public ValidationThread(String line, APIQuery api_query) {
-		
-	}
-}
-
 public class Validator {
-	Ontology ontology;
+	volatile Ontology ontology;
 	Category c = new Category();
-	ArrayList<String> allProps = new ArrayList<String>();
-	ArrayList<String> generalWarnings = new ArrayList<String>(); // General warnings not specific to a given csv entry
+	volatile ArrayList<String> allProps = new ArrayList<String>();
+	volatile ArrayList<String> generalWarnings = new ArrayList<String>(); // General warnings not specific to a given csv entry
+	volatile StringBuilder sbans = new StringBuilder();
+	volatile ArrayList<DataEntry> dataEntries = new ArrayList<DataEntry>(); 
 	
 	// Generates validation report
 	public String getValidationReport(String loc, String output) throws Exception {
-		StringBuilder sbans = new StringBuilder();
 		String sub = loc.substring(loc.lastIndexOf("/") + 1, loc.length());
 
 		// Create API query object
@@ -68,182 +62,29 @@ public class Validator {
 		if(sub.contains("csv")) {	
             BufferedReader br = null;
             br = new BufferedReader((new InputStreamReader(new FileInputStream(loc), "ISO-8859-1")));   
-						
-			
-			
+
 			String first_line = br.readLine();
 			readColHeaders(first_line); // Read the column headers and initial validation setup
+
+			ExecutorService executor = Executors.newCachedThreadPool();
 			
 			String current = "";
 			while((current = br.readLine()) != null) {
-							
-				current = current.replace("; ", ";");
-				current = current.replace("_", " ");
-
-				if(!current.equals("")) {
-					if(current.contains("\"")) {
-						String tempcurr = "";
-						String doublequote = "";
-						
-						for(int i=0; i<current.length(); i++) {
-							if(current.charAt(i) != '\"') {
-								tempcurr += current.charAt(i);	
-							}
-							else if(current.charAt(i) == '\"') {
-								int j=i+1;
-							
-								while(j<current.length() && current.charAt(j) != '\"') {
-									doublequote += current.charAt(j);
-									j++;
-								}
-								doublequote = doublequote.replace(',', '$');
-								tempcurr += doublequote;
-								doublequote = "";
-								
-								i=j;
-							}
-						}
-						current=tempcurr;
-					}
-					
-					ArrayList<String> warnings = new ArrayList<String>(); // list of warnings
-					ArrayList<String> notes = new ArrayList<String>(); // list of notes
-					
-					String currentarr[] = current.split(",");
-					
-					HashMap<String,List<String>> hmap=new HashMap<>();
-					
-					c.setName(currentarr[0]);
-					
-					String entity = c.getName();
-					entity = entity.replaceAll(" ", "+");
-					
-					// Create API query object 
-					if(api_query.doesExist(entity, c.getType())) {
-						sbans.append("<strong>" + hyperlink(c.getName()) +" "+c.getType()+" already exists. Your csv data will overwrite any existing values with the wiki. </strong><br /><br />");
-					}
-					else {
-						sbans.append("<strong>" + c.getName() +" "+c.getType()+" does not exist. A new wiki page will be created. </strong><br /><br />");
-					}
-					
-					int warnings_index = sbans.length(); // Index to append warnings
-					
-					for(int i=1; i<currentarr.length; i++) {
-						if(currentarr.length >= i) {							
-							String arr[]=currentarr[i].split(";");
-							
-							List<String> values=Arrays.asList(arr); // gets potential list of values for a property
-							ArrayList<String> valid_values = new ArrayList<String>();
-							
-							// add property values to report if they are not empty
-							if(!values.contains("") || values.size() > 1) {	
-								for(int k=0; k<values.size(); k++) {
-									values.set(k, values.get(k).replace('$', ','));
-								}
-															
-								for(String value : values) {
-									// Format property for ontology query
-									String property = allProps.get(i-1);
-									property = property.split(" ")[0];
-									property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
-									
-									if(!ontology.validType(api_query, property, value)) {		
-										if(ontology.isObjectProp(property)) {
-											notes.add("- NOTE: Property " + allProps.get(i-1) + " received value '" + value + "' a page for this value doesn't exist, so one will be created <br />");
-											valid_values.add(value);
-										}
-										else {
-											warnings.add("- WARNING: Incompatible Type Error – Property " + allProps.get(i-1) + " received value '" + value + "' but expects a value of type " + ontology.getDataRange(property) + ". Value will not be added! <br />");
-										}
-									}
-									else {										
-										/*** CHECKING FOR WARNINGS ***/
-										// check for shortened value error
-										if(value.length() == 1 && !isInteger(value)) {
-											notes.add("- NOTE: Property " + allProps.get(i-1) + " has shortened value of '" + value + "', was this intended? <br />");
-											valid_values.add(value);
-										}
-										// check for abbreviations error
-										else if(value.length() == 2 && value.contains(".")) {
-											warnings.add("- WARNING: Abbreviations Error – Property " + allProps.get(i-1) + " value '" + value + "' will not be added! <br />");
-										}
-										else {
-											// Hyperlink existing objects
-											if(ontology.isObjectProp(property)) {
-												valid_values.add(hyperlink(value));
-											}
-											else{
-												valid_values.add(value);
-											}
-										}
-									}
-								}
-							}
-							
-							/*** CHECKING FOR EMPTY STRING NOTE ***/
-							if(values.contains("")) {
-								notes.add("- NOTE: Empty value found for property " + allProps.get(i-1) + " and will not be added! <br />");
-							}
-							
-							if(!valid_values.isEmpty()) {
-								sbans.append("- Property " + allProps.get(i-1) + " will be added with value(s): <br />");
-								for(String value : valid_values) {
-									sbans.append("&emsp; - " + value + "<br /><br />");
-								}
-							}
-							
-							hmap.put(allProps.get(i-1), values);
-						}
-					}
-					
-					/*** ADDING WARNINGS TO REPORT ***/
-					warnings.addAll(generalWarnings);
-					if(!warnings.isEmpty()) {
-						String warnings_str = "";
-						warnings_str += "<font color=red> ******************************************************************* <br />";
-						
-						warnings_str += "<strong> ALERT: " + warnings.size() + " warning(s) found </strong><br />";
-						
-						for(String warning : warnings) {
-							warnings_str += warning + "<br />";
-						}
-						
-						warnings_str += "******************************************************************* </font><br /><br />";
-						sbans.insert(warnings_index, warnings_str);
-					}
-					/*** ADDING NOTES TO REPORT ***/
-					if(!notes.isEmpty()) {
-						sbans.append("<font color=#636363> ******************************************************************* <br />");
-						
-						sbans.append("<strong> ALERT: " + notes.size() + " note(s) found </strong><br />");
-						
-						for(String note : notes) {
-							sbans.append(note + "<br />");
-						}
-						
-						sbans.append("******************************************************************* </font><br /><br />");
-					}
-					sbans.append("------------------------------------------------------------------------------------------------<br /><br /><br /><br />");
-					
-				}
+				Category temp = new Category();
+				temp.setType(c.getType());
+				executor.execute(new ValidationThread(current, api_query, sbans, temp, ontology, allProps, generalWarnings, dataEntries));
 			}
+			
 			br.close();
 			
+			executor.shutdown();
+			while(!executor.isTerminated()) {
+				Thread.yield();
+			}	
+			
 			return sbans.toString();
-		}
-		
+		}	
 		return "ERROR";	
-	}
-	
-	// Checks if input is an integer
-	private boolean isInteger(String input) {
-	    try {
-	        Integer.parseInt(input);
-	        return true;
-	    }
-	    catch(NumberFormatException e) {
-	        return false;
-	    }
 	}
 	
 	private void readColHeaders(String current) {	
@@ -287,8 +128,4 @@ public class Validator {
 		}
 	}
 	
-	private String hyperlink(String value) {
-		String value_asLink = value.replace(" ", "_");
-		return "<a href=" + Constants.WIKI_INDEX+value_asLink + ">" + value + "</a>";
-	}	
 }
