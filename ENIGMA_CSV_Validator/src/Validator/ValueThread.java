@@ -39,23 +39,23 @@ public class ValueThread extends Thread {
 				
 		if(!ontology.validType(api_query, property, value)) {		
 			if(ontology.isObjectProp(property)) {
-				notes.add("- NOTE: Property " + prop + " received value '" + value + "' a page for this value doesn't exist, so one will be created <br />");
+				notes.add("- Property <b><i>" + prop + "</i></b> received value <b><i>'" + value + "'</i></b> a page for this value doesn't exist, so one will be created <br />");
 				valid_values.add(value);
 			}
 			else {
-				warnings.add("- WARNING: Incompatible Type Error – Property " + prop + " received value '" + value + "' but expects a value of type " + ontology.getDataRange(property) + ". Value will not be added! <br />");
+				warnings.add("- Incompatible Type Error: Property <b><i>" + prop + "</i></b> received value <b><i>'" + value + "'</i></b> but expects a value of type <b><i>" + ontology.getDataRange(property) + "</i></b>. Value will not be added! <br />");
 			}
 		}
 		else {										
 			/*** CHECKING FOR WARNINGS ***/
 			// check for shortened value error
 			if(value.length() == 1 && !isInteger(value)) {
-				notes.add("- NOTE: Property " + prop + " has shortened value of '" + value + "', was this intended? <br />");
+				notes.add("- Property <b><i>" + prop + "</i></b> has shortened value of <b><i>'" + value + "'</i></b>, was this intended? <br />");
 				valid_values.add(value);
 			}
 			// check for abbreviations error
 			else if(value.length() == 2 && value.contains(".")) {
-				warnings.add("- WARNING: Abbreviations Error – Property " + prop + " value '" + value + "' will not be added! <br />");
+				warnings.add("- Abbreviations Error: Property <b><i>" + prop + "</i></b> value <b><i>'" + value + "'</i></b> will not be added! <br />");
 			}
 			else {
 				// Hyperlink existing objects

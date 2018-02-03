@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.util.*,Data.DataEntry" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
@@ -35,7 +36,24 @@
 				    if (event.target == modal) {
 				        modal.style.display = "none";
 				    }
-				} 
+				}
+				
+				var acc = document.getElementsByClassName("accordion");
+				var i;
+				
+				for (i = 0; i < acc.length; i++) {
+				  acc[i].addEventListener("click", function() {
+				    this.classList.toggle("active");
+				    var panel = this.nextElementSibling;
+				    
+				    if (panel.style.maxHeight) {
+				      panel.style.maxHeight = null;
+				    }
+				    else {
+				      panel.style.maxHeight = "none";
+				    } 
+				  });
+				}
 			};
 			
 			function validateForm() {
@@ -69,7 +87,7 @@
 		</div>
 		<div id="report_container">
 			<%
-	      		String validationReport = (String) session.getAttribute("report");
+			ArrayList<DataEntry> validationReport = (ArrayList<DataEntry>) session.getAttribute("report");
 
 				if (validationReport != null) {
 					request.getSession().removeAttribute("report");
@@ -78,8 +96,58 @@
 	      			<div id="report" class="report">
 		 				<div class="report_content">
 		    				<span class="close">&times;</span>
-		    				<h2>Validation Report</h2>
-		    				<p><%=validationReport %></p>
+		    				<h1 style="text-align: center">Validation Report</h1>
+		    				<%
+		    					for(DataEntry dataEntry : validationReport) {
+		    				%>
+		    						<hr>    						
+		    						<button style="font-weight: bold; font-size: 18px" class="accordion"><%=dataEntry.getName() %></button>
+		    						<div class="panel">	
+		    							<div style="font-style: italic; font-size: 14px">NOTE: <%=dataEntry.getHeader() %></div>
+		    							<br />
+		    				<% 
+		    							if(dataEntry.getWarningsHeader() != null) {
+		    				%>
+			    							<button class="accordion"><%=dataEntry.getWarningsHeader() %></button>
+			    							<div class="panel">    							
+			    								<p style="font-size: 15px"><%=dataEntry.getWarnings() %></p>
+			    							</div>
+			    							<br />
+			    			<% 
+			    					    }
+
+									HashMap<String, ArrayList<String>> propValues = dataEntry.getPropValMap();
+				    				for(HashMap.Entry<String, ArrayList<String>> entry : propValues.entrySet()) {
+				    				    String prop = entry.getKey();
+				    				    ArrayList<String> values = entry.getValue();
+							%>
+										<button class="accordion">Property <strong><%=prop%></strong> will be added with value(s):</button>
+										<div class="panel">
+							<%
+											
+											for(String value : values) {
+							%>
+												<p style="font-weight: bold; font-size: 15px">&emsp; - <%=value %><p>
+							<%				
+											}
+							%>											
+										</div>
+				    		<%			
+				    				}
+	    								if(dataEntry.getNotesHeader() != null) {
+	    					%>
+		    								<br />
+		    								<button class="accordion" style="font-size: 13px"><%=dataEntry.getNotesHeader() %></button>
+		    								<div class="panel">    							
+		    									<p style="font-size: 13px"><%=dataEntry.getNotes() %></p>
+		    								</div>
+		    				<% 
+		    					    	}
+				    		%>
+		    						</div>	
+		    				<% 	    				
+		    					}
+		    				%>
 						</div>
 					</div>
 	      	<%

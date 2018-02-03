@@ -48,11 +48,10 @@ public class Validator {
 	Category c = new Category();
 	volatile ArrayList<String> allProps = new ArrayList<String>();
 	volatile ArrayList<String> generalWarnings = new ArrayList<String>(); // General warnings not specific to a given csv entry
-	volatile StringBuilder sbans = new StringBuilder();
 	volatile ArrayList<DataEntry> dataEntries = new ArrayList<DataEntry>(); 
 	
 	// Generates validation report
-	public String getValidationReport(String loc, String output) throws Exception {
+	public ArrayList<DataEntry> getValidationReport(String loc, String output) throws Exception {
 		String sub = loc.substring(loc.lastIndexOf("/") + 1, loc.length());
 
 		// Create API query object
@@ -72,7 +71,7 @@ public class Validator {
 			while((current = br.readLine()) != null) {
 				Category temp = new Category();
 				temp.setType(c.getType());
-				executor.execute(new ValidationThread(current, api_query, sbans, temp, ontology, allProps, generalWarnings, dataEntries));
+				executor.execute(new ValidationThread(current, api_query, temp, ontology, allProps, generalWarnings, dataEntries));
 			}
 			
 			br.close();
@@ -82,9 +81,9 @@ public class Validator {
 				Thread.yield();
 			}	
 			
-			return sbans.toString();
+			return dataEntries;
 		}	
-		return "ERROR";	
+		return null;	
 	}
 	
 	private void readColHeaders(String current) {	
@@ -123,7 +122,7 @@ public class Validator {
 			
 			// If property doesn't exist in the ontology
 			if(!ontology.propertyExists(property)) {
-				generalWarnings.add("- WARNING: Undefined Property Error – Property " + currentarr[i] + " does not exist within the wiki and will be ignored! <br />");
+				generalWarnings.add("- Undefined Property Error: Property <b><i>" + currentarr[i] + "</i></b> does not exist within the wiki and will be ignored! <br />");
 			}
 		}
 	}

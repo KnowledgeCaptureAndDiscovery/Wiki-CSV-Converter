@@ -15,7 +15,6 @@ import Utilities.Constants;
 public class ValidationThread extends Thread {
 	private String current;
 	private APIQuery api_query;
-	private StringBuilder main_sbans;
 	private Category c; 
 	private Ontology ontology;
 	private ArrayList<String> allProps;
@@ -24,7 +23,6 @@ public class ValidationThread extends Thread {
 	
 	public ValidationThread(String line, 
 			APIQuery apiQuery, 
-			StringBuilder mainSbans, 
 			Category cat, 
 			Ontology ont,
 			ArrayList<String> all_props, 
@@ -32,7 +30,6 @@ public class ValidationThread extends Thread {
 			ArrayList<DataEntry> dataEntries) {
 		current = line;
 		api_query = apiQuery;
-		main_sbans = mainSbans;
 		c = cat;
 		ontology = ont;
 		allProps = all_props;
@@ -44,9 +41,7 @@ public class ValidationThread extends Thread {
 		current = current.replace("; ", ";");
 		current = current.replace("_", " ");
 
-		if(!current.equals("")) {
-			StringBuilder sbans = new StringBuilder();
-			
+		if(!current.equals("")) {			
 			if(current.contains("\"")) {
 				String tempcurr = "";
 				String doublequote = "";
@@ -87,14 +82,13 @@ public class ValidationThread extends Thread {
 			
 			// Create API query object 
 			if(api_query.doesExist(entity, c.getType())) {
-				sbans.append("<strong>" + hyperlink(c.getName()) +" "+c.getType()+" already exists. Your csv data will overwrite any existing values with the wiki. </strong><br /><br />");
+				dataEntry.setHeader("Entry already exists. Your csv data will overwrite any existing values with the wiki");
+				dataEntry.setName(hyperlink(c.getName()));
 			}
 			else {
-				sbans.append("<strong>" + c.getName() +" "+c.getType()+" does not exist. A new wiki page will be created. </strong><br /><br />");
+				dataEntry.setHeader("Entry does not exist. A new wiki page will be created.");
 			}
-			
-			int warnings_index = sbans.length(); // Index to append warnings
-							
+										
 			for(int i=1; i<currentarr.length; i++) {
 				if(currentarr.length >= i) {							
 					String arr[]=currentarr[i].split(";");
@@ -124,14 +118,11 @@ public class ValidationThread extends Thread {
 					
 					/*** CHECKING FOR EMPTY STRING NOTE ***/
 					if(values.contains("")) {
-						notes.add("- NOTE: Empty value found for property " + allProps.get(i-1) + " and will not be added! <br />");
+						notes.add("- Empty value found for property <b><i>" + allProps.get(i-1) + "</i></b> and will not be added! <br />");
 					}
 					
 					if(!valid_values.isEmpty()) {
-						sbans.append("- Property " + allProps.get(i-1) + " will be added with value(s): <br />");
-						for(String value : valid_values) {
-							sbans.append("&emsp; - " + value + "<br /><br />");
-						}
+						dataEntry.addPropAndValues(allProps.get(i-1), valid_values);
 					}
 					hmap.put(allProps.get(i-1), values);
 				}
@@ -140,32 +131,31 @@ public class ValidationThread extends Thread {
 			/*** ADDING WARNINGS TO REPORT ***/
 			warnings.addAll(generalWarnings);
 			if(!warnings.isEmpty()) {
+				dataEntry.setWarningsHeader("<font color=red><b>ALERT: " + warnings.size() + " warning(s) found</b></font>");
+				
 				String warnings_str = "";
-				warnings_str += "<font color=red> ******************************************************************* <br />";
-				
-				warnings_str += "<strong> ALERT: " + warnings.size() + " warning(s) found </strong><br />";
-				
+				warnings_str += "<font color=red>";
+								
 				for(String warning : warnings) {
 					warnings_str += warning + "<br />";
 				}
 				
-				warnings_str += "******************************************************************* </font><br /><br />";
-				sbans.insert(warnings_index, warnings_str);
+				warnings_str += "</font>";
+				
+				dataEntry.addWarnings(warnings_str);
 			}
 			/*** ADDING NOTES TO REPORT ***/
 			if(!notes.isEmpty()) {
-				sbans.append("<font color=#636363> ******************************************************************* <br />");
+				dataEntry.setNotesHeader("<i>*" + notes.size() + " note(s) found</i>");
 				
-				sbans.append("<strong> ALERT: " + notes.size() + " note(s) found </strong><br />");
-				
+				String notes_str = "";
 				for(String note : notes) {
-					sbans.append(note + "<br />");
+					notes_str += note + "<br />";
 				}
 				
-				sbans.append("******************************************************************* </font><br /><br />");
+				dataEntry.addNotes(notes_str);
 			}
-			sbans.append("------------------------------------------------------------------------------------------------<br /><br /><br /><br />");
-			main_sbans.append(sbans);
+			dataEntries.add(dataEntry);
 		}
 	}
 	
