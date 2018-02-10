@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import="java.util.*,Data.DataEntry" %>
+<%@ page import="java.util.*,Report.ReportEntry" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
@@ -87,7 +87,7 @@
 		</div>
 		<div id="report_container">
 			<%
-			ArrayList<DataEntry> validationReport = (ArrayList<DataEntry>) session.getAttribute("report");
+			ArrayList<ReportEntry> validationReport = (ArrayList<ReportEntry>) session.getAttribute("report");
 
 				if (validationReport != null) {
 					request.getSession().removeAttribute("report");
@@ -98,25 +98,25 @@
 		    				<span class="close">&times;</span>
 		    				<h1 style="text-align: center">Validation Report</h1>
 		    				<%
-		    					for(DataEntry dataEntry : validationReport) {
+		    					for(ReportEntry reportEntry : validationReport) {
 		    				%>
 		    						<hr>    						
-		    						<button style="font-weight: bold; font-size: 18px" class="accordion"><%=dataEntry.getName() %></button>
+		    						<button style="font-weight: bold; font-size: 18px" class="accordion"><%=reportEntry.getName() %></button>
 		    						<div class="panel">	
-		    							<div style="font-style: italic; font-size: 14px">NOTE: <%=dataEntry.getHeader() %></div>
+		    							<div style="font-style: italic; font-size: 14px">NOTE: <%=reportEntry.getHeader() %></div>
 		    							<br />
 		    				<% 
-		    							if(dataEntry.getWarningsHeader() != null) {
+		    							if(reportEntry.getWarningsHeader() != null) {
 		    				%>
-			    							<button class="accordion"><%=dataEntry.getWarningsHeader() %></button>
+			    							<button class="accordion"><%=reportEntry.getWarningsHeader() %></button>
 			    							<div class="panel">    							
-			    								<p style="font-size: 15px"><%=dataEntry.getWarnings() %></p>
+			    								<p style="font-size: 15px"><%=reportEntry.getWarnings() %></p>
 			    							</div>
 			    							<br />
 			    			<% 
 			    					    }
 
-									HashMap<String, ArrayList<String>> propValues = dataEntry.getPropValMap();
+									HashMap<String, ArrayList<String>> propValues = reportEntry.getPropValMap();
 				    				for(HashMap.Entry<String, ArrayList<String>> entry : propValues.entrySet()) {
 				    				    String prop = entry.getKey();
 				    				    ArrayList<String> values = entry.getValue();
@@ -134,12 +134,12 @@
 										</div>
 				    		<%			
 				    				}
-	    								if(dataEntry.getNotesHeader() != null) {
+	    								if(reportEntry.getNotesHeader() != null) {
 	    					%>
 		    								<br />
-		    								<button class="accordion" style="font-size: 13px"><%=dataEntry.getNotesHeader() %></button>
+		    								<button class="accordion" style="font-size: 13px"><%=reportEntry.getNotesHeader() %></button>
 		    								<div class="panel">    							
-		    									<p style="font-size: 13px"><%=dataEntry.getNotes() %></p>
+		    									<p style="font-size: 13px"><%=reportEntry.getNotes() %></p>
 		    								</div>
 		    				<% 
 		    					    	}

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,9 @@ public class APIQuery {
 	public static void main(String[] args) {
 		APIQuery api_query = new APIQuery();
 		api_query.login();
-		System.out.println(api_query.doesExist("AMC", "Cohort (E)"));
+		ArrayList<String> test = new ArrayList<>();
+		api_query.listAllPages(Constants.WIKI_ALL_PAGES, test);
+		System.out.println(test);
 	}
 	
 	public APIQuery() {
@@ -229,4 +232,61 @@ public class APIQuery {
 		}
 	}
 	
+	// Stores all current pages within the wiki
+	public void listAllPages(String requestLink, ArrayList<String> allEntities) {
+		try {					
+			HttpGet request = new HttpGet(requestLink);
+			
+			//Execute and get the response.
+			HttpResponse http_response = httpclient.execute(request);
+			HttpEntity http_entity = http_response.getEntity();
+			
+			if (http_entity != null) {
+			    InputStream instream = http_entity.getContent();
+			    try {
+			    	BufferedReader in = new BufferedReader(new InputStreamReader(instream));
+					String inputLine;
+					StringBuffer response = new StringBuffer();
+			
+					while ((inputLine = in.readLine()) != null) {
+						response.append(inputLine);
+					}
+					
+			        JSONParser parser = new JSONParser();
+			        Object obj = parser.parse(response.toString());
+			        JSONObject jsonObject = (JSONObject) obj;
+			        
+		            JSONObject query = (JSONObject) jsonObject.get("query");
+		            JSONArray allpages = (JSONArray) query.get("allpages");
+		            
+		            for(int i = 0; i < allpages.size(); i++) {
+		            	JSONObject page = (JSONObject) allpages.get(i);
+		            	String title = (String) page.get("title");
+		            	
+		            	allEntities.add(title); // Add page title to all entities list
+		            }
+		            
+		            JSONObject cont = (JSONObject) jsonObject.get("continue");
+		            if(cont != null) {
+		            	String continueTag = (String) cont.get("continue");
+		            	String apcontinue = (String) cont.get("apcontinue");
+
+		            	listAllPages(Constants.WIKI_ALL_PAGES 
+		            					+ "&continue=" + URLEncoder.encode(continueTag, "UTF-8") 
+		            					+ "&apcontinue=" + URLEncoder.encode(apcontinue, "UTF-8"),
+		            				allEntities);
+		            }
+           
+					in.close();
+			    } finally {
+			        instream.close();
+			    }
+			}	
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}	
 }

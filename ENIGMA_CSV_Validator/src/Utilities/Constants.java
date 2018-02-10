@@ -7,6 +7,7 @@ public class Constants {
 	// WIKI Location
 	public static final String WIKI = "http://organicdatacuration.org/enigma_new";
 	public static final String WIKI_INDEX = "http://organicdatacuration.org/enigma_new/index.php/";
+	public static final String WIKI_ALL_PAGES = WIKI + "/api.php?&format=json&action=query&list=allpages&aplimit=100";
 	
 	
 	// Ontology NameSpace

@@ -1,6 +1,7 @@
 package Ontology;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.apache.jena.ontology.EnumeratedClass;
 import org.apache.jena.ontology.OntModel;
@@ -28,9 +29,9 @@ public class Ontology {
 	public static void main(String[] args) {
 		APIQuery api_query = new APIQuery();
 		api_query.login();
-		Ontology ontology = new Ontology(Constants.COHORT_ONTOLOGY);
-		ontology.validType(api_query, "hasMaxIQ", "100");
-		ontology.validType(api_query, "hasStatus", "100");
+		//Ontology ontology = new Ontology(Constants.COHORT_ONTOLOGY);
+		//ontology.validType(api_query, "hasMaxIQ", "100");
+		//ontology.validType(api_query, "hasStatus", "100");
 //		ontology.validType("hasPI", "lol");
 	}
 	
@@ -84,7 +85,7 @@ public class Ontology {
     }
     
     // Checks if property value is consistent with type in ontology
-    public boolean validType(APIQuery api_query, String property_str, String property_val) {
+    public boolean validType(ArrayList<String> allWikiEntities, String property_str, String property_val) {
     	OntProperty property = model.getOntProperty(Constants.ONTOLOGY_NS + property_str);
   	
         if(property == null) {
@@ -92,7 +93,7 @@ public class Ontology {
         }
         // Object Property Type Validation
         else if(property.isObjectProperty()) {   
-    		if(api_query.doesExist(property_val)) {
+    		if(allWikiEntities.contains(property_val)) {
     			return true;
     		}
     		return false;

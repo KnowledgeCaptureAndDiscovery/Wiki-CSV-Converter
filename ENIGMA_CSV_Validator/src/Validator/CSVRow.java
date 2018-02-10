@@ -4,32 +4,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import APIquery.APIQuery;
-import Data.DataEntry;
 import Ontology.Ontology;
+import Report.ReportEntry;
 import Utilities.Constants;
 
-public class ValidationThread extends Thread {
+public class CSVRow {
 	private String current;
-	private APIQuery api_query;
+	private ArrayList<String> allWikiEntities;
 	private Category c; 
 	private Ontology ontology;
 	private ArrayList<String> allProps;
 	private ArrayList<String> generalWarnings;
-	private ArrayList<DataEntry> dataEntries;
+	private ArrayList<ReportEntry> dataEntries;
 	
-	public ValidationThread(String line, 
-			APIQuery apiQuery, 
+	public CSVRow(String line, 
+			ArrayList<String> allWikiEntities,
 			Category cat, 
 			Ontology ont,
 			ArrayList<String> all_props, 
 			ArrayList<String> general_warnings,
-			ArrayList<DataEntry> dataEntries) {
+			ArrayList<ReportEntry> dataEntries) {
 		current = line;
-		api_query = apiQuery;
+		this.allWikiEntities = allWikiEntities;
 		c = cat;
 		ontology = ont;
 		allProps = all_props;
@@ -37,7 +34,8 @@ public class ValidationThread extends Thread {
 		this.dataEntries = dataEntries;
 	}
 	
-	public void run() {
+	// Validates a row of csv data
+	public void validate() {
 		current = current.replace("; ", ";");
 		current = current.replace("_", " ");
 
@@ -74,14 +72,13 @@ public class ValidationThread extends Thread {
 			
 			HashMap<String,List<String>> hmap=new HashMap<>();
 			
-			DataEntry dataEntry = new DataEntry(currentarr[0], c.getType());
+			ReportEntry dataEntry = new ReportEntry(currentarr[0], c.getType());
 			c.setName(currentarr[0]);
 			
 			String entity = c.getName();
-			entity = entity.replaceAll(" ", "+");
 			
-			// Create API query object 
-			if(api_query.doesExist(entity, c.getType())) {
+			// Check if object exists in wiki
+			if(allWikiEntities.contains(entity)) {
 				dataEntry.setHeader("Entry already exists. Your csv data will overwrite any existing values with the wiki");
 				dataEntry.setName(hyperlink(c.getName()));
 			}
@@ -101,19 +98,12 @@ public class ValidationThread extends Thread {
 						for(int k=0; k<values.size(); k++) {
 							values.set(k, values.get(k).replace('$', ','));
 						}
-										
-						ExecutorService executor = Executors.newCachedThreadPool();
-						
-						// Create separate thread for each cell value
+																
+						// Validate each cell value
 						for(String value : values) {
-							executor.execute(new ValueThread(value, ontology, api_query, allProps.get(i-1), notes, warnings, valid_values));
-						}
-						
-						executor.shutdown();
-						while(!executor.isTerminated()) {
-							Thread.yield();
-						}	
-						
+							CSVCell cell = new CSVCell(value, ontology, allWikiEntities, allProps.get(i-1), notes, warnings, valid_values);
+							cell.validate();
+						}							
 					}
 					
 					/*** CHECKING FOR EMPTY STRING NOTE ***/

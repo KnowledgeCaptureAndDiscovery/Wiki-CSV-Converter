@@ -2,28 +2,27 @@ package Validator;
 
 import java.util.ArrayList;
 
-import APIquery.APIQuery;
 import Ontology.Ontology;
 import Utilities.Constants;
 
-public class ValueThread extends Thread {
+public class CSVCell {
 	private String value;
 	private Ontology ontology;
-	private APIQuery api_query;
+	private ArrayList<String> allWikiEntities;
 	private String prop;
 	private ArrayList<String> notes;
 	private ArrayList<String> warnings;
 	private ArrayList<String> valid_values;
 	
-	public ValueThread(String val, 
+	public CSVCell(String val, 
 			Ontology ont, 
-			APIQuery apiQuery, 
+			ArrayList<String> allWikiEntities, 
 			String property,
 			ArrayList<String> notes_, 
 			ArrayList<String> warnings_,
 			ArrayList<String> validValues) {
 		value = val;
-		api_query = apiQuery;
+		this.allWikiEntities = allWikiEntities;
 		ontology = ont;
 		prop = property;
 		notes = notes_;
@@ -31,13 +30,13 @@ public class ValueThread extends Thread {
 		valid_values = validValues;
 	}
 	
-	public void run() {
+	public void validate() {
 		// Format property for ontology query
 		String property = prop;
 		property = property.split(" ")[0];
 		property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
 				
-		if(!ontology.validType(api_query, property, value)) {		
+		if(!ontology.validType(allWikiEntities, property, value)) {		
 			if(ontology.isObjectProp(property)) {
 				notes.add("- Property <b><i>" + prop + "</i></b> received value <b><i>'" + value + "'</i></b> a page for this value doesn't exist, so one will be created <br />");
 				valid_values.add(value);
@@ -55,7 +54,12 @@ public class ValueThread extends Thread {
 			}
 			// check for abbreviations error
 			else if(value.length() == 2 && value.contains(".")) {
-				warnings.add("- Abbreviations Error: Property <b><i>" + prop + "</i></b> value <b><i>'" + value + "'</i></b> will not be added! <br />");
+				if(!prop.equals("HasMiddleInitial")) {
+					warnings.add("- Abbreviations Error: Property <b><i>" + prop + "</i></b> value <b><i>'" + value + "'</i></b> will not be added! <br />");
+				}
+				else {
+					valid_values.add(value);
+				}
 			}
 			else {
 				// Hyperlink existing objects

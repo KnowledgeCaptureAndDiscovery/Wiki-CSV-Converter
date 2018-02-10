@@ -1,11 +1,11 @@
-package Data;
+package Report;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 // Class to encapsulate a row of data from spreadsheet 
 
-public class DataEntry {
+public class ReportEntry {
 	
 	private String name;
 	private String type;
@@ -17,7 +17,7 @@ public class DataEntry {
 	private String notesHeader;
 	
 	// Constructor, intializes hashmap for properties and values, initializes data type and name
-	public DataEntry(String name, String type) {
+	public ReportEntry(String name, String type) {
 		this.name = name;
 		this.type = type;
 		warnings = "";
@@ -47,23 +47,6 @@ public class DataEntry {
 	// Gets name of DataEntry
 	public String getType() {
 		return type;
-	}
-	
-	// Adds property to hashmap if it does not yet exist
-	public void addProp(String property) {
-		if(!propValues.containsKey(property)) {
-			ArrayList<String> values = new ArrayList<String>();
-			propValues.put(property, values);
-		}
-	}
-	
-	// Adds value to hashmap using the specified property
-	public void addValue(String property, String value) {
-		if(propValues.containsKey(property)) {
-			ArrayList<String> updatedValues = propValues.get(property);
-			updatedValues.add(value);
-			propValues.put(property, updatedValues);
-		}
 	}
 	
 	// Adds property with linked values to hashmap

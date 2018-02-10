@@ -4,12 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import APIquery.*;
-import Data.DataEntry;
 import Ontology.*;
+import Report.ReportEntry;
 import Utilities.*;
 
 class Category {
@@ -48,15 +46,17 @@ public class Validator {
 	Category c = new Category();
 	volatile ArrayList<String> allProps = new ArrayList<String>();
 	volatile ArrayList<String> generalWarnings = new ArrayList<String>(); // General warnings not specific to a given csv entry
-	volatile ArrayList<DataEntry> dataEntries = new ArrayList<DataEntry>(); 
+	volatile ArrayList<ReportEntry> dataEntries = new ArrayList<ReportEntry>(); 
+	ArrayList<String> allWikiEntities = new ArrayList<String>(); // All entities currently in wiki
 	
 	// Generates validation report
-	public ArrayList<DataEntry> getValidationReport(String loc, String output) throws Exception {
+	public ArrayList<ReportEntry> getValidationReport(String loc, String output) throws Exception {
 		String sub = loc.substring(loc.lastIndexOf("/") + 1, loc.length());
 
 		// Create API query object
 		APIQuery api_query = new APIQuery(); 
 		api_query.login();
+		api_query.listAllPages(Constants.WIKI_ALL_PAGES, allWikiEntities);
 		
 		if(sub.contains("csv")) {	
             BufferedReader br = null;
@@ -64,23 +64,19 @@ public class Validator {
 
 			String first_line = br.readLine();
 			readColHeaders(first_line); // Read the column headers and initial validation setup
-
-			ExecutorService executor = Executors.newCachedThreadPool();
 			
 			String current = "";
+			
+			// Validate each row of the csv
 			while((current = br.readLine()) != null) {
 				Category temp = new Category();
 				temp.setType(c.getType());
-				executor.execute(new ValidationThread(current, api_query, temp, ontology, allProps, generalWarnings, dataEntries));
+				CSVRow row = new CSVRow(current, allWikiEntities, temp, ontology, allProps, generalWarnings, dataEntries);
+				row.validate();
 			}
 			
 			br.close();
-			
-			executor.shutdown();
-			while(!executor.isTerminated()) {
-				Thread.yield();
-			}	
-			
+						
 			return dataEntries;
 		}	
 		return null;	
