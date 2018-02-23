@@ -32,8 +32,9 @@ public class Ontology {
 		ArrayList<String> allWikiEntities = new ArrayList<String>(); // All entities currently in wiki
 		api_query.listAllPages(Constants.WIKI_ALL_PAGES, allWikiEntities);
 
-		Ontology ontology = new Ontology(Constants.COHORT_ONTOLOGY);
-		System.out.println(ontology.validType(allWikiEntities, "hasMsaxIQ", "100"));
+		Ontology ontology = new Ontology(Constants.ORGANIZATION_ONTOLOGY);
+		System.out.println(ontology.propertyExists("country-name"));
+		System.out.println(ontology.validType(allWikiEntities, "hasAffiliate", "100"));
 	}
 	
     // Load ontology model from file
@@ -45,21 +46,36 @@ public class Ontology {
           
         model.read(in, "");  
     }
-
+    
     // Checks if property exists
-    public boolean propertyExists(String property_str) {    	
-    	OntProperty property = model.getOntProperty(Constants.ONTOLOGY_NS + property_str);
-    	
-        if(property == null) {
-        	return false;
-        }
+    public boolean propertyExists(String property_str) {
+    	for(int i = 0; i < Constants.ONT_NAMESPACES.size(); i++) {
+        	OntProperty property = model.getOntProperty(Constants.ONT_NAMESPACES.get(i) + property_str);
+        	
+        	if(property != null) {
+            	return true;
+            }
+    	}
         
-        return true;
+        return false;
     }
     
     // Gets data range of property
     public String getDataRange(String property_str) {
-    	OntProperty property = model.getOntProperty(Constants.ONTOLOGY_NS + property_str);
+    	OntProperty property = null;
+    	
+    	// Get prop from ont model
+    	for(int i = 0; i < Constants.ONT_NAMESPACES.size(); i++) {
+        	property = model.getOntProperty(Constants.ONT_NAMESPACES.get(i) + property_str);
+        	
+        	if(property != null) {
+        		break;
+        	}
+    	}
+    	
+    	if(property == null) {
+    		return null;
+    	}
     	
     	EnumeratedClass e = null;
 		ExtendedIterator<RDFNode> i = null;
@@ -87,7 +103,16 @@ public class Ontology {
     
     // Checks if property value is consistent with type in ontology
     public boolean validType(ArrayList<String> allWikiEntities, String property_str, String property_val) {
-    	OntProperty property = model.getOntProperty(Constants.ONTOLOGY_NS + property_str);
+    	OntProperty property = null;
+    	
+    	// Get prop from ont model
+    	for(int i = 0; i < Constants.ONT_NAMESPACES.size(); i++) {
+        	property = model.getOntProperty(Constants.ONT_NAMESPACES.get(i) + property_str);
+        	
+        	if(property != null) {
+        		break;
+        	}
+    	}
   	
         if(property == null) {
         	return false;
@@ -160,11 +185,20 @@ public class Ontology {
     
     // Checks if property is an object property
     public boolean isObjectProp(String property_str) {
-    	OntProperty property = model.getOntProperty(Constants.ONTOLOGY_NS + property_str);
+    	OntProperty property = null;
     	
-    	if(property == null) {
-    		return false;
+    	// Get prop from ont model
+    	for(int i = 0; i < Constants.ONT_NAMESPACES.size(); i++) {
+        	property = model.getOntProperty(Constants.ONT_NAMESPACES.get(i) + property_str);
+        	
+        	if(property != null) {
+        		break;
+        	}
     	}
+  	
+        if(property == null) {
+        	return false;
+        }
     	else if(property.isObjectProperty()) {
     		 return true;
     	}

@@ -111,10 +111,7 @@ public class Validator {
 		for(int i=1; i<currentarr.length; i++) {
 			allProps.add(currentarr[i]);
 			
-			// Format property for ontology query
 			String property = currentarr[i];
-			property = property.split(" ")[0];
-			property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
 			
 			// If property doesn't exist in the ontology
 			if(!ontology.propertyExists(property)) {

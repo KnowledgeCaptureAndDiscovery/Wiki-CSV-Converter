@@ -1,5 +1,9 @@
 package Utilities;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 // Global constants to be used 
 
 public class Constants {
@@ -10,8 +14,12 @@ public class Constants {
 	public static final String WIKI_ALL_PAGES = WIKI + "/api.php?&format=json&action=query&list=allpages&aplimit=100";
 	
 	
-	// Ontology NameSpace
-	public static final String ONTOLOGY_NS = "https://w3id.org/enigma#";
+	// Ontology NameSpaces
+	public static final List<String> ONT_NAMESPACES = 
+		    Collections.unmodifiableList(Arrays.asList("https://w3id.org/enigma#", 
+		    										   "http://www.w3.org/2006/vcard/ns#", 
+		    										   "http://vivoweb.org/ontology/core#", 
+		    										   "http://xmlns.com/foaf/0.1/"));
 	
 	// Ontology Files	
 	public static final String COHORT_ONTOLOGY = Constants.class.getResource("/CohortOntology.owl").getPath();	

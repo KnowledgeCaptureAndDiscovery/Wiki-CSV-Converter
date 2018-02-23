@@ -31,10 +31,7 @@ public class CSVCell {
 	}
 	
 	public void validate() {
-		// Format property for ontology query
 		String property = prop;
-		property = property.split(" ")[0];
-		property = Character.toLowerCase(property.charAt(0)) + property.substring(1);
 		
 		// If property exists in the ontology
 		if(ontology.propertyExists(property)) {
