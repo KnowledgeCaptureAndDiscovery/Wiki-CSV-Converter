@@ -29,10 +29,11 @@ public class Ontology {
 	public static void main(String[] args) {
 		APIQuery api_query = new APIQuery();
 		api_query.login();
-		//Ontology ontology = new Ontology(Constants.COHORT_ONTOLOGY);
-		//ontology.validType(api_query, "hasMaxIQ", "100");
-		//ontology.validType(api_query, "hasStatus", "100");
-//		ontology.validType("hasPI", "lol");
+		ArrayList<String> allWikiEntities = new ArrayList<String>(); // All entities currently in wiki
+		api_query.listAllPages(Constants.WIKI_ALL_PAGES, allWikiEntities);
+
+		Ontology ontology = new Ontology(Constants.COHORT_ONTOLOGY);
+		System.out.println(ontology.validType(allWikiEntities, "hasMsaxIQ", "100"));
 	}
 	
     // Load ontology model from file
@@ -89,7 +90,7 @@ public class Ontology {
     	OntProperty property = model.getOntProperty(Constants.ONTOLOGY_NS + property_str);
   	
         if(property == null) {
-        	return true;
+        	return false;
         }
         // Object Property Type Validation
         else if(property.isObjectProperty()) {   
