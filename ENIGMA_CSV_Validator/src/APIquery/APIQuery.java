@@ -262,7 +262,7 @@ public class APIQuery {
 		            for(int i = 0; i < allpages.size(); i++) {
 		            	JSONObject page = (JSONObject) allpages.get(i);
 		            	String title = (String) page.get("title");
-		            	
+		            
 		            	allEntities.add(title); // Add page title to all entities list
 		            }
 		            

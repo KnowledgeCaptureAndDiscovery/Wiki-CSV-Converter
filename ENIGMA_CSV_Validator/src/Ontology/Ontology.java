@@ -32,9 +32,9 @@ public class Ontology {
 		ArrayList<String> allWikiEntities = new ArrayList<String>(); // All entities currently in wiki
 		api_query.listAllPages(Constants.WIKI_ALL_PAGES, allWikiEntities);
 
-		Ontology ontology = new Ontology(Constants.ORGANIZATION_ONTOLOGY);
-		System.out.println(ontology.propertyExists("country-name"));
-		System.out.println(ontology.validType(allWikiEntities, "hasAffiliate", "100"));
+		Ontology ontology = new Ontology(Constants.PERSON_ONTOLOGY);
+		System.out.println(ontology.propertyExists("isImagingDataAnalystOf"));
+		System.out.println(ontology.validType(allWikiEntities, "isImagingDataAnalystOf", "Bipolar Project"));
 	}
 	
     // Load ontology model from file
@@ -49,15 +49,26 @@ public class Ontology {
     
     // Checks if property exists
     public boolean propertyExists(String property_str) {
-    	for(int i = 0; i < Constants.ONT_NAMESPACES.size(); i++) {
-        	OntProperty property = model.getOntProperty(Constants.ONT_NAMESPACES.get(i) + property_str);
-        	
-        	if(property != null) {
-            	return true;
-            }
+    	
+    	// Check if property is a roles property
+    	if(Constants.ROLES_PROPERTIES.containsKey(property_str)) {
+    		return true;
     	}
-        
-        return false;
+    	// Check if property is an inverse property
+    	else if(Constants.INVERSE_PROPERTIES.containsKey(property_str)) {
+    		return true;
+    	}
+    	else {
+    		for(int i = 0; i < Constants.ONT_NAMESPACES.size(); i++) {
+            	OntProperty property = model.getOntProperty(Constants.ONT_NAMESPACES.get(i) + property_str);
+            	
+            	if(property != null) {
+                	return true;
+                }
+        	}
+            
+            return false;
+    	}
     }
     
     // Gets data range of property
@@ -103,6 +114,21 @@ public class Ontology {
     
     // Checks if property value is consistent with type in ontology
     public boolean validType(ArrayList<String> allWikiEntities, String property_str, String property_val) {
+    	// Check if property is a roles property
+    	if(Constants.ROLES_PROPERTIES.containsKey(property_str)) {
+    		if(allWikiEntities.contains(property_val)) {
+    			return true;
+    		}
+    		return false;    	
+    	}
+    	// Check if property is an inverse property
+    	else if(Constants.INVERSE_PROPERTIES.containsKey(property_str)) {
+    		if(allWikiEntities.contains(property_val)) {
+    			return true;
+    		}
+    		return false;
+    	}
+    	
     	OntProperty property = null;
     	
     	// Get prop from ont model
@@ -185,6 +211,15 @@ public class Ontology {
     
     // Checks if property is an object property
     public boolean isObjectProp(String property_str) {
+    	// Check if property is a roles property
+    	if(Constants.ROLES_PROPERTIES.containsKey(property_str)) {
+    		return true;
+    	}
+    	// Check if property is an inverse property
+    	else if(Constants.INVERSE_PROPERTIES.containsKey(property_str)) {
+    		return true;
+    	}
+    	
     	OntProperty property = null;
     	
     	// Get prop from ont model
