@@ -72,21 +72,21 @@ public class CSVRow {
 			
 			HashMap<String,List<String>> hmap=new HashMap<>();
 			
-			ReportEntry dataEntry = new ReportEntry(currentarr[0], c.getType());
+			ReportEntry reportEntry = new ReportEntry(currentarr[0], c.getType());
 			c.setName(currentarr[0]);
 			
 			String entity = c.getName();
 			
 			// Check if object exists in wiki
 			if(allWikiEntities.contains(entity)) {
-				dataEntry.setHeader("Entry already exists. Your csv data will overwrite any existing values with the wiki");
-				dataEntry.setName(hyperlink(c.getName()));
+				reportEntry.setHeader("The above entry already exists. Your csv data will overwrite any existing values with the wiki.");
+				reportEntry.setName(hyperlink(c.getName()));
 			}
 			else {
-				dataEntry.setHeader("Entry does not exist. A new wiki page will be created.");
+				reportEntry.setHeader("The above entry does not exist. A new wiki page will be created.");
 			}
 										
-			for(int i=1; i<currentarr.length; i++) {
+			for(int i = 1; i < currentarr.length; i++) {
 				if(currentarr.length >= i) {							
 					String arr[]=currentarr[i].split(";");
 					
@@ -112,7 +112,7 @@ public class CSVRow {
 					}
 					
 					if(!valid_values.isEmpty()) {
-						dataEntry.addPropAndValues(allProps.get(i-1), valid_values);
+						reportEntry.addPropAndValues(allProps.get(i-1), valid_values);
 					}
 					hmap.put(allProps.get(i-1), values);
 				}
@@ -121,7 +121,7 @@ public class CSVRow {
 			/*** ADDING WARNINGS TO REPORT ***/
 			warnings.addAll(generalWarnings);
 			if(!warnings.isEmpty()) {
-				dataEntry.setWarningsHeader("<font color=red><b>ALERT: " + warnings.size() + " warning(s) found</b></font>");
+				reportEntry.setWarningsHeader("<font color=red><b>ALERT: " + warnings.size() + " warning(s) found</b></font>");
 				
 				String warnings_str = "";
 				warnings_str += "<font color=red>";
@@ -132,20 +132,20 @@ public class CSVRow {
 				
 				warnings_str += "</font>";
 				
-				dataEntry.addWarnings(warnings_str);
+				reportEntry.addWarnings(warnings_str);
 			}
 			/*** ADDING NOTES TO REPORT ***/
 			if(!notes.isEmpty()) {
-				dataEntry.setNotesHeader("<i>*" + notes.size() + " note(s) found</i>");
+				reportEntry.setNotesHeader(notes.size() + " note(s) found");
 				
 				String notes_str = "";
 				for(String note : notes) {
 					notes_str += note + "<br />";
 				}
 				
-				dataEntry.addNotes(notes_str);
+				reportEntry.addNotes(notes_str);
 			}
-			dataEntries.add(dataEntry);
+			dataEntries.add(reportEntry);
 		}
 	}
 	

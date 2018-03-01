@@ -39,8 +39,7 @@ public class CSVCell {
 			// Invalid range of property
 			if(!ontology.validType(allWikiEntities, property, value)) {		
 				if(ontology.isObjectProp(property)) {
-					notes.add("- Property <b><i>" + prop + "</i></b> received value <b><i>'" + value + "'</i></b> a page for this value doesn't exist, so one will be created <br />");
-					valid_values.add(value);
+					valid_values.add(value + "*"); // Indicates a wiki page for this value doesn't exist
 				}
 				else {
 					warnings.add("- Incompatible Type Error: Property <b><i>" + prop + "</i></b> received value <b><i>'" + value + "'</i></b> but expects a value of type <b><i>" + ontology.getDataRange(property) + "</i></b>. Value will not be added! <br />");

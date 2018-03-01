@@ -103,14 +103,14 @@
 		    						<hr>    						
 		    						<button style="font-weight: bold; font-size: 18px" class="accordion"><%=reportEntry.getName() %></button>
 		    						<div class="panel">	
-		    							<div style="font-style: italic; font-size: 14px">NOTE: <%=reportEntry.getHeader() %></div>
+		    							<div style="font-style: italic; font-size: 14px">NOTICE: <%=reportEntry.getHeader() %></div>
 		    							<br />
 		    				<% 
 		    							if(reportEntry.getWarningsHeader() != null) {
 		    				%>
 			    							<button class="accordion"><%=reportEntry.getWarningsHeader() %></button>
 			    							<div class="panel">    							
-			    								<p style="font-size: 15px"><%=reportEntry.getWarnings() %></p>
+			    								<p style="font-size: 13px"><%=reportEntry.getWarnings() %></p>
 			    							</div>
 			    							<br />
 			    			<% 
@@ -126,9 +126,16 @@
 							<%
 											
 											for(String value : values) {
+												if(value.contains("*")) {
+							%>
+													<p style="font-weight: bold; font-size: 15px" title="*A page for this value doesn't exist, so one will be created">&emsp; - <%=value %><p>								
+							<%
+												}
+												else {
 							%>
 												<p style="font-weight: bold; font-size: 15px">&emsp; - <%=value %><p>
 							<%				
+												}
 											}
 							%>											
 										</div>
@@ -137,7 +144,7 @@
 	    								if(reportEntry.getNotesHeader() != null) {
 	    					%>
 		    								<br />
-		    								<button class="accordion" style="font-size: 13px"><%=reportEntry.getNotesHeader() %></button>
+		    								<button class="accordion" style="font-size: 15px"><%=reportEntry.getNotesHeader() %></button>
 		    								<div class="panel">    							
 		    									<p style="font-size: 13px"><%=reportEntry.getNotes() %></p>
 		    								</div>
