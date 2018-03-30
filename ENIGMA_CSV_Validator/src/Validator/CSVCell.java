@@ -54,7 +54,7 @@ public class CSVCell {
 				}
 				// check for abbreviations error
 				else if(value.length() == 2 && value.contains(".")) {
-					if(!prop.equals("HasMiddleInitial")) {
+					if(!prop.equals("hasMiddleInitial")) {
 						warnings.add("- Abbreviations Error: Property <b><i>" + prop + "</i></b> value <b><i>'" + value + "'</i></b> will not be added! <br />");
 					}
 					else {
